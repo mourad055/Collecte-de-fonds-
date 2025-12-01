@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ClientController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -15,4 +17,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::get('/clients',[ClientController::class,'index']);
+
+Route::get('/check-backend', function () {
+    try {
+        \DB::connection()->getPdo();
+        return "Backend + Database OK ✔";
+    } catch (\Exception $e) {
+        return "Erreur : " . $e->getMessage();
+    }
 });
