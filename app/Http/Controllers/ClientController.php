@@ -1,9 +1,120 @@
 <?php
+
 namespace App\Http\Controllers;
+
 use App\Models\Client;
 use Illuminate\Http\Request;
 
-class ClientController extends Controller {
-    public function index(){ return Client::all(); }
-    public function store(Request $r){ return Client::create($r->all()); }
+class ClientController extends Controller
+{
+    /**
+     * Afficher la liste des clients
+     * GET /clients
+     */
+    public function index()
+    {
+        // Récupérer tous les clients depuis la base de données
+        $clients = Client::all();
+
+        // Envoyer les clients à la vue liste_client
+        return view('client.liste_client', compact('clients'));
+    }
+
+    /**
+     * Afficher le formulaire d'ajout
+     * GET /clients/create
+     */
+    public function create()
+    {
+        return view('client.ajout_client');
+    }
+
+    /**
+     * Enregistrer un nouveau client
+     * POST /clients
+     */
+    public function store(Request $request)
+    {
+        // Validation des données envoyées par le formulaire
+        $request->validate([
+            'nom_cli'      => 'required|string|max:100',
+            'prenom_cli'   => 'required|string|max:100',
+            'tel_cli'      => 'required|string|max:20',
+            'adresse_cli'  => 'required|string|max:255',
+            'solde_cli'    => 'required|string|max:100',
+        ]);
+
+        // Création du client
+        Client::create([
+            'nom_cli'      => $request->nom_cli,
+            'prenom_cli'   => $request->prenom_cli,
+            'tel_cli'      => $request->tel_cli,
+            'adresse_cli'  => $request->adresse_cli,
+            'solde_cli'    => $request->solde_cli,
+        ]);
+
+        // Redirection vers la liste avec message de succès
+        return redirect()
+            ->route('clients.index')
+            ->with('success', 'Client ajouté avec succès');
+    }
+
+    /**
+     * Afficher le formulaire de modification
+     * GET /clients/{id}/edit
+     */
+    public function edit($id)
+    {
+        // Trouver le client ou afficher une erreur 404
+        $client = Client::findOrFail($id);
+
+        return view('client.modifier', compact('client'));
+    }
+
+    /**
+     * Mettre à jour un client
+     * PUT /clients/{id}
+     */
+    public function update(Request $request, $id)
+    {
+        // Validation
+        $request->validate([
+            'nom_cli'      => 'required|string|max:100',
+            'prenom_cli'   => 'required|string|max:100',
+            'tel_cli'      => 'required|string|max:20',
+            'adresse_cli'  => 'required|string|max:255',
+            'solde_cli'    => 'required|string|max:100',
+        ]);
+
+        // Récupération du client
+        $client = Client::findOrFail($id);
+
+        // Mise à jour
+        $client->update([
+            'nom_cli'      => $request->nom_cli,
+            'prenom_cli'   => $request->prenom_cli,
+            'tel_cli'      => $request->tel_cli,
+            'adresse_cli'  => $request->adresse_cli,
+            'solde_cli'    => $request->solde_cli,
+        ]);
+
+        // Redirection vers la liste
+        return redirect()
+            ->route('clients.index')
+            ->with('success', 'Client modifié avec succès');
+    }
+
+    /**
+     * Supprimer un client
+     * DELETE /clients/{id}
+     */
+    public function destroy($id)
+    {
+        $client = Client::findOrFail($id);
+        $client->delete();
+
+        return redirect()
+            ->route('clients.index')
+            ->with('success', 'Client supprimé avec succès');
+    }
 }
