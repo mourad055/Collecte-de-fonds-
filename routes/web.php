@@ -4,7 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ClientController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AuthController;
-
+use App\Http\Controllers\PaiementController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\CollecteurController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -22,34 +24,12 @@ Route::get('/', function () {
 });
 
 
-//route page paiement
-Route::get('/paiement', function () {
-    return view('paiement.paiement');
-})->name('paiement');
-
-Route::post('/paiement', function () {
-    // logique de paiement ici
-    // ex: validation, enregistrement, génération du reçu
-})->name('paiement.store');
-
-//route generé recu
-Route::post('/paiement', function (\Illuminate\Http\Request $request) {
-
-    // Génération du numéro de reçu
-    $numero_recu = 'RCU-' . date('Ymd') . '-' . rand(1000, 9999);
-
-    return view('recu.generate', [
-        'numero_recu'   => $numero_recu,
-        'nom'           => $request->nom,
-        'reference'     => $request->reference,
-        'montant'       => $request->montant,
-        'mode_paiement' => $request->mode_paiement,
-        'date_paiement' => $request->date_paiement,
-    ]);
-
-})->name('paiement.generate');
 
 
+Route::get('/paiement', [PaiementController::class, 'create'])->name('paiement');
+Route::post('/paiement', [PaiementController::class, 'store'])->name('paiement.store');
+// (optionnel - pour une page listant les paiements)
+Route::get('/paiements', [PaiementController::class, 'index'])->name('paiements.index');
 
 Route::post('/recu/pdf', function (Request $request) {
 
@@ -77,17 +57,41 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
 
-    Route::get('/admin/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
+    // Routes Admin
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+        
+        // Gestion des collecteurs
+        Route::get('/collecteurs', [AdminController::class, 'collecteurs'])->name('collecteurs');
+        Route::get('/collecteurs/create', [AdminController::class, 'createCollecteur'])->name('collecteurs.create');
+        Route::post('/collecteurs', [AdminController::class, 'storeCollecteur'])->name('collecteurs.store');
+        Route::get('/collecteurs/{id}/edit', [AdminController::class, 'editCollecteur'])->name('collecteurs.edit');
+        Route::put('/collecteurs/{id}', [AdminController::class, 'updateCollecteur'])->name('collecteurs.update');
+        Route::delete('/collecteurs/{id}', [AdminController::class, 'destroyCollecteur'])->name('collecteurs.destroy');
+        
+        // Gestion des clients
+        Route::get('/clients', [AdminController::class, 'clients'])->name('clients');
+        Route::get('/clients/create', [AdminController::class, 'createClient'])->name('clients.create');
+        Route::post('/clients', [AdminController::class, 'storeClient'])->name('clients.store');
+        Route::get('/clients/{id}/edit', [AdminController::class, 'editClient'])->name('clients.edit');
+        Route::put('/clients/{id}', [AdminController::class, 'updateClient'])->name('clients.update');
+        Route::delete('/clients/{id}', [AdminController::class, 'destroyClient'])->name('clients.destroy');
+        
+        // Transactions
+        Route::get('/transactions', [AdminController::class, 'transactions'])->name('transactions');
+        
+        // Encaissements
+        Route::get('/encaissements', [AdminController::class, 'encaissements'])->name('encaissements');
+        Route::post('/encaissements/{id}/valider', [AdminController::class, 'validerPaiement'])->name('encaissements.valider');
+        Route::post('/encaissements/{id}/rejeter', [AdminController::class, 'rejeterPaiement'])->name('encaissements.rejeter');
+        
+        // Rapports
+        Route::get('/rapport/financier', [AdminController::class, 'exportRapportFinancier'])->name('rapport.financier');
+        Route::get('/statistiques', [AdminController::class, 'exportStatistiques'])->name('statistiques');
+    });
 
-    Route::get('/collecteur/dashboard', function () {
-        return view('collecteur.dashboard');
-    })->name('collecteur.dashboard');
+    Route::get('/collecteur/dashboard', [CollecteurController::class, 'dashboard'])->name('collecteur.dashboard');
 
-    Route::get('/client/dashboard', function () {
-        return view('client.dashboard');
-    })->name('client.dashboard');
 });
 
 Route::get('/clients/create', [ClientController::class, 'create'])
@@ -115,6 +119,11 @@ Route::delete('/clients/{id}', [ClientController::class, 'destroy'])
 
 // Route resource pour les clients
 Route::resource('clients', ClientController::class);
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/client/dashboard', [ClientController::class, 'dashboard'])
+        ->name('client.dashboard');
+});
 
 
 

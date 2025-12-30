@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ClientController extends Controller
 {
@@ -116,5 +117,29 @@ class ClientController extends Controller
         return redirect()
             ->route('clients.index')
             ->with('success', 'Client supprimé avec succès');
+    }
+
+    /**
+     * Tableau de bord d'un client authentifié
+     * GET /client/dashboard
+     */
+    public function dashboard()
+    {
+        $user = Auth::user();
+
+        // Récupération du client lié
+        $client = Client::where('id_cli', $user->related_id)->first();
+
+        // Sécurité si jamais
+        if (!$client) {
+            abort(404, 'Client introuvable');
+        }
+
+        return view('client.dashboard', [
+            'solde'         => $client->solde_cli,
+            'client'        => $client,
+            // À brancher plus tard sur de vraies données de transaction
+            'transactions'  => collect(),
+        ]);
     }
 }

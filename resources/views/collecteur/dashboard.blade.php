@@ -4,305 +4,578 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Collecteur</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
         :root {
-            --main-bg: #F3FFF6;                       /* Blanc/vert très pâle */
-            --navbar-bg: #098142;                     /* Vert principal FONCÉ */
-            --navbar-btn: #fff;                       /* Boutons navbar : blanc */
-            --navbar-icon: #94d9ad;                   /* Vert clair pour icônes */
-            --primary: #086230;                       /* Vert primaire FONCÉ */
-            --primary-light: #daf4e6;                 /* Vert très clair */
-            --action-bg: #fff;                        /* Fond des actions : blanc */
-            --action-shadow: 0 4px 28px 0 rgba(9,129,66,0.10);
-            --action-shadow-hover: 0 8px 40px 0 rgba(9,129,66,0.17);
-            --action-accent: #e4f8ea;                 /* Accent de carte: vert très pâle */
-            --action-icon: #086230;                   /* Icônes d'action : vert */
-            --footer-bg: #075128;                     /* Footer vert foncé */
-            --footer-txt: #fff;                       /* Texte footer blanc */
-            --footer-link: #b3ffd3;                   /* Lien footer : vert menthe pâle */
-            --footer-link-hover: #fff;                /* Hover: blanc */
-            --action-btn-gradient-light: #daf4e6;     
-            --action-btn-gradient-dark: #41b76f;      
-            --action-btn-hover-gradient-light: #16a058; 
-            --action-btn-hover-gradient-dark: #075128;
-            --action-btn-glow: 0 4px 24px 0 rgba(9,129,66,0.08), 0 1.5px 7px 0 #35e68733;
-            --action-btn-glow-hover: 0 8px 36px 0 rgba(9,129,66,0.24), 0 2px 8px 0 #27c37633;
-            --action-btn-border: 2px solid #24dc7d;
-            --text-main: #15452f;                     /* Texte principal : vert sombre */
+            --primary-green: #0E8D4D;
+            --accent-green: #0b6f3d;
+            --gray-bg: #f6f6fa;
+            --white: #fff;
+            --dark-gray: #23272F;
+            --sidebar-width: 260px;
         }
+        
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: var(--main-bg);
-            margin: 0;
-            min-height: 100vh;
-            color: var(--text-main);
-            display: flex;
-            flex-direction: column;
+            background: var(--gray-bg);
+            color: var(--dark-gray);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        /* Navbar green & modern */
-        .navbar {
-            width: 100%;
-            background: var(--navbar-bg);
-            color: var(--navbar-btn);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 46px;
-            position: sticky;
+        
+        .sidebar {
+            position: fixed;
             top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 14px 0 rgba(9,129,66,0.12);
+            left: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background: var(--primary-green);
+            color: var(--white);
+            padding: 20px 0;
+            z-index: 1000;
+            overflow-y: auto;
         }
-        .navbar .logo {
-            font-size: 1.38em;
-            font-weight: 800;
-            letter-spacing: 1.5px;
-            color: #fff;
+        
+        .sidebar-brand {
+            padding: 20px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar-menu li {
+            margin: 5px 0;
+        }
+        
+        .sidebar-menu a {
             display: flex;
             align-items: center;
-            gap: 9px;
+            padding: 12px 20px;
+            color: var(--white);
+            text-decoration: none;
+            transition: all 0.3s;
         }
-        .navbar .logo .ti {
-            color: #d7ffe5;
-            font-size: 1.5em;
+        
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: rgba(255,255,255,0.1);
+            border-left: 4px solid var(--white);
         }
-        .navbar .navbar-actions {
-            display: flex;
-            gap: 18px;
+        
+        .sidebar-menu i {
+            margin-right: 12px;
+            width: 20px;
         }
-        .navbar .nav-btn {
-            background: linear-gradient(90deg, #0e5834 10%, #178a4b 80%);
+        
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 30px;
+        }
+        
+        .stat-card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 24px rgba(53,92,125,0.07);
             border: none;
-            color: var(--navbar-btn);
-            font-size: 1.05em;
-            padding: 8px 22px 8px 16px;
-            border-radius: 32px;
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-card .icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
-            cursor: pointer;
-            transition: background 0.17s, color 0.13s, box-shadow 0.16s, transform 0.09s;
-            gap: 9px;
-            outline: none;
-            text-decoration: none;
-            box-shadow: 0 2px 10px 0 rgba(15,72,41,0.07);
-            border-bottom: 2.5px solid #13c16b55;
-            position: relative;
-            overflow: hidden;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        
+        .stat-card.primary .icon {
+            background: rgba(14, 141, 77, 0.1);
+            color: var(--primary-green);
+        }
+        
+        .stat-card.success .icon {
+            background: rgba(71, 165, 94, 0.1);
+            color: #47a55e;
+        }
+        
+        .stat-card.warning .icon {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+        
+        .stat-card.info .icon {
+            background: rgba(13, 202, 240, 0.1);
+            color: #0dcaf0;
+        }
+        
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        
+        .stat-card .label {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .dashboard-card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 24px rgba(53,92,125,0.07);
+            border: none;
+            margin-bottom: 25px;
+        }
+        
+        .dashboard-card h5 {
             font-weight: 600;
-            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+            color: var(--dark-gray);
         }
-        .navbar .nav-btn .ti {
-            font-size: 1.35em;
-            color: var(--navbar-icon);
-        }
-        .navbar .nav-btn:hover, .navbar .nav-btn:focus-visible {
-            background: linear-gradient(90deg, #18b273 18%, #086230 90%);
-            color: #b9fddd;
-            transform: translateY(-1.5px) scale(1.04);
-            box-shadow: 0 2px 22px 0 rgba(9,129,66,0.17);
-        }
-        /* Container and Welcome */
-        .container {
-            max-width: 780px;
-            margin: 40px auto 32px auto;
-            background: var(--action-bg);
-            border-radius: 22px;
-            box-shadow: var(--action-shadow);
-            padding: 44px 46px 38px 46px;
-            text-align: center;
-        }
-        .welcome-modern {
-            font-size: 1.62em;
-            margin-bottom: 31px;
-            font-weight: 800;
-            color: var(--primary);
-            letter-spacing: 1px;
-            background: var(--primary-light);
-            border-radius: 14px;
-            display: inline-block;
-            padding: 18px 42px 17px 42px;
-            border-left: 7px solid var(--primary);
-            border-bottom: 2.5px solid #41b76f;
-            box-shadow: 0 4px 22px 0 #09451b0e;
-        }
-        /* Actions - Modern neon-green button style */
-        .actions {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 34px 24px;
-            margin-top: 23px;
-        }
-        .action-btn {
-            background: linear-gradient(120deg, var(--action-btn-gradient-light) 50%, var(--action-btn-gradient-dark) 98%);
-            color: var(--primary);
-            border: var(--action-btn-border);
-            outline: none;
-            border-radius: 19px;
-            font-size: 1.14em;
-            font-weight: 700;
-            padding: 29px 39px 25px 39px;
-            box-shadow: var(--action-btn-glow);
-            transition: 
-                background 0.13s, 
-                box-shadow 0.16s, 
-                transform 0.11s, 
-                color 0.13s, 
-                border 0.17s;
-            cursor: pointer;
-            min-width: 210px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            position: relative;
+        
+        .table-responsive {
+            border-radius: 10px;
             overflow: hidden;
-            margin-bottom: 3px;
-            letter-spacing: 0.5px;
         }
-        .action-btn .action-icon {
-            font-size: 2.14em;
-            margin-bottom: 12px;
-            color: #1ae977;
-            background: linear-gradient(130deg, #a8f2c9 62%, #e1fbe3 100%);
-            border-radius: 99px;
-            padding: 11px 15px 10px 15px;
-            box-shadow: 0 3px 14px 0 rgba(22,192,100,0.13);
-            margin-top: -7px;
-            border: 2px solid #24dc7d2c;
-            transition: color 0.14s, box-shadow 0.12s;
+        
+        .table thead th {
+            background: var(--primary-green);
+            color: var(--white);
+            border: none;
+            font-weight: 500;
+            padding: 15px;
         }
-        .action-btn:hover,
-        .action-btn:focus-visible {
-            background: linear-gradient(120deg, var(--action-btn-hover-gradient-light) 10%, var(--action-btn-hover-gradient-dark) 100%);
-            transform: translateY(-5px) scale(1.045);
-            box-shadow: var(--action-btn-glow-hover);
-            color: #16a058;
-            border: 2.5px solid #1ae977;
+        
+        .table tbody td {
+            padding: 15px;
+            vertical-align: middle;
         }
-        .action-btn:hover .action-icon,
-        .action-btn:focus-visible .action-icon {
-            color: #fff;
-            background: linear-gradient(120deg, #13c16b 50%, #24dc7d 100%);
-            border: 2px solid #1ae977;
-            box-shadow: 0 5px 18px 0 #22d78b22;
+        
+        .table-striped > tbody > tr:nth-of-type(odd) {
+            --bs-table-bg-type: #f8f9fa;
         }
-        .action-btn:active {
-            background: #c5ffd8;
-            color: #0c9957;
-            border: 2.5px solid #13c16bcc;
-            box-shadow: 0 1px 4px #21c77135;
+        
+        .badge {
+            padding: 6px 12px;
+            font-weight: 500;
         }
-        @media (max-width: 820px) {
-            .container {
-                max-width: 99vw;
-                padding: 8vw 4vw 8vw 4vw;
+        
+        .navbar-top {
+            background: var(--white);
+            padding: 15px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-left: var(--sidebar-width);
+        }
+        
+        .btn-export {
+            background: var(--primary-green);
+            color: var(--white);
+            border: none;
+        }
+        
+        .btn-export:hover {
+            background: var(--accent-green);
+            color: var(--white);
+        }
+        
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            background: var(--primary-green);
+            color: var(--white);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 1001;
+        }
+        
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+        
+        .sidebar-overlay.active {
+            display: block;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
             }
-            .actions { gap: 19px 0;}
-        }
-        @media (max-width: 600px) {
-            .container {
-                padding: 4vw 2vw 5vw 2vw;
-                margin: 26px 2vw 16px 2vw;
+            
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
             }
-            .welcome-modern {
-                font-size: 1.07em;
-                padding: 12px 10vw 10px 5vw;
+            
+            .sidebar.active {
+                transform: translateX(0);
             }
-            .actions { gap: 14px 0; }
-            .action-btn { min-width: 90vw; font-size: 1em; padding: 17px 9px;}
-            .action-icon { font-size: 1.6em;}
-            .navbar { flex-direction: column; gap: 9px; padding: 14px 5vw;}
-            .navbar .logo { font-size: 1.08em;}
+            
+            .main-content {
+                margin-left: 0;
+                padding: 15px;
+            }
+            
+            .navbar-top {
+                margin-left: 0;
+                padding: 15px;
+            }
+            
+            .navbar-top h4 {
+                font-size: 1.2rem;
+            }
+            
+            .stat-card {
+                padding: 20px;
+            }
+            
+            .stat-card .value {
+                font-size: 1.5rem;
+            }
+            
+            .stat-card .icon {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+            
+            .dashboard-card {
+                padding: 15px;
+            }
+            
+            .table thead th,
+            .table tbody td {
+                padding: 10px 8px;
+                font-size: 0.85rem;
+            }
         }
-        /* Footer green */
-        .footer {
-            background: var(--footer-bg);
-            color: var(--footer-txt);
-            text-align: center;
-            padding: 26px 14px 23px 14px;
-            font-size: 1em;
-            margin-top: auto;
-            border-top-left-radius: 18px;
-            border-top-right-radius: 18px;
-            box-shadow: 0 -1px 17px 0 rgba(9,129,66,0.08);
-        }
-        .footer .footer-links {
-            margin-bottom: 11px;
-            display: flex;
-            justify-content: center;
-            gap: 21px;
-            flex-wrap: wrap;
-        }
-        .footer a {
-            color: var(--footer-link);
-            text-decoration: none;
-            font-weight: 700;
-            transition: color 0.17s;
-        }
-        .footer a:hover {
-            color: var(--footer-link-hover);
-            text-decoration: underline;
+        
+        @media (max-width: 576px) {
+            .main-content {
+                padding: 10px;
+            }
+            
+            .navbar-top {
+                padding: 10px;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .navbar-top h4 {
+                font-size: 1rem;
+            }
+            
+            .stat-card {
+                padding: 15px;
+            }
+            
+            .stat-card .value {
+                font-size: 1.3rem;
+            }
+            
+            .stat-card .label {
+                font-size: 0.8rem;
+            }
+            
+            .dashboard-card {
+                padding: 12px;
+            }
+            
+            .dashboard-card h5 {
+                font-size: 1rem;
+                margin-bottom: 15px;
+            }
+            
+            .table thead th,
+            .table tbody td {
+                padding: 8px 5px;
+                font-size: 0.75rem;
+            }
+            
+            .badge {
+                padding: 4px 8px;
+                font-size: 0.7rem;
+            }
         }
     </style>
-    <!-- Tabler Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
 </head>
 <body>
-    <!-- Navbar moderne -->
-    <nav class="navbar">
-        <div class="logo">
-            <i class="ti ti-grid-dots"></i>
-            Collecteur
+    <!-- Mobile Menu Toggle -->
+    <button class="menu-toggle position-fixed" id="menuToggle" style="top: 15px; left: 15px;">
+        <i class="bi bi-list"></i>
+    </button>
+    
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    
+    <!-- Sidebar -->
+    @include('collecteur.partials.sidebar')
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navbar -->
+        <div class="navbar-top">
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <h4 class="mb-0">Tableau de Bord - {{ $collecteur->nom_collect }} {{ $collecteur->prenom_collect }}</h4>
+                <div>
+                    <span class="badge bg-success">Zone: {{ $collecteur->zone_collect }}</span>
+                </div>
+            </div>
         </div>
-        <div class="navbar-actions">
-            <a href="#" class="nav-btn" title="Aide">
-                <i class="ti ti-help-circle"></i>
-                Aide
-            </a>
-            <a href="#" class="nav-btn" title="Paramètres">
-                <i class="ti ti-settings"></i>
-                Paramètres
-            </a>
-            <form action="{{ route('logout') }}" method="POST" style="display:inline;">
-                @csrf
-                <button type="submit" class="nav-btn" title="Déconnexion">
-                    <i class="ti ti-logout"></i>
-                    Déconnexion
-                </button>
-            </form>
+
+        <!-- Statistics Cards -->
+        <div class="row mt-4">
+            <div class="col-md-3 mb-4">
+                <div class="stat-card primary">
+                    <div class="icon">
+                        <i class="bi bi-arrow-left-right"></i>
+                    </div>
+                    <div class="value">{{ number_format($totalTransactions, 0, ',', ' ') }}</div>
+                    <div class="label">Total Transactions</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="stat-card success">
+                    <div class="icon">
+                        <i class="bi bi-cash-stack"></i>
+                    </div>
+                    <div class="value">{{ number_format($totalEncaissements, 0, ',', ' ') }} FCFA</div>
+                    <div class="label">Encaissements Totaux</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="stat-card info">
+                    <div class="icon">
+                        <i class="bi bi-calendar-month"></i>
+                    </div>
+                    <div class="value">{{ number_format($paiementsCeMois, 0, ',', ' ') }} FCFA</div>
+                    <div class="label">Encaissements ce Mois</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="stat-card warning">
+                    <div class="icon">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <div class="value">{{ $paiementsEnAttente }}</div>
+                    <div class="label">Paiements en Attente</div>
+                </div>
+            </div>
         </div>
-    </nav>
-    <div class="container">
-        <div class="welcome-modern">
-            Bienvenue, <span style="color:var(--primary);">{{ Auth::user()->name }}</span>
+
+        <!-- Additional Stats -->
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="stat-card">
+                    <div class="d-flex align-items-center">
+                        <div class="icon bg-primary bg-opacity-10 text-primary me-3">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <div>
+                            <div class="value text-primary">{{ number_format($totalClients, 0, ',', ' ') }}</div>
+                            <div class="label">Clients</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="stat-card">
+                    <div class="d-flex align-items-center">
+                        <div class="icon bg-success bg-opacity-10 text-success me-3">
+                            <i class="bi bi-cash-coin"></i>
+                        </div>
+                        <div>
+                            <div class="value text-success">{{ number_format($totalPaiements, 0, ',', ' ') }}</div>
+                            <div class="label">Total Paiements</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="stat-card">
+                    <div class="d-flex align-items-center">
+                        <div class="icon bg-warning bg-opacity-10 text-warning me-3">
+                            <i class="bi bi-exclamation-triangle"></i>
+                        </div>
+                        <div>
+                            <div class="value text-warning">{{ number_format($montantEnAttente, 0, ',', ' ') }} FCFA</div>
+                            <div class="label">Montant en Attente</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="actions">
-            <a href="{{ route('clients.create') }}" class="action-btn">
-                <span class="action-icon"><i class="ti ti-user-plus"></i></span>
-                Enregistrer un client
-            </a>
-            <a href="{{ route('clients.index') }}" class="action-btn">
-                <span class="action-icon"><i class="ti ti-users"></i></span>
-                Liste des clients enregistrés
-            </a>
-            <a href="{{ route('clients.create') }}" class="action-btn">
-                <span class="action-icon"><i class="ti ti-user-circle"></i></span>
-                Créer un compte client
-            </a>
-            <a href="{{ route('paiement') }}" class="action-btn">
-                <span class="action-icon"><i class="ti ti-currency-dollar"></i></span>
-                Enregistrer un paiement
-            </a>
+
+        <!-- Recent Transactions and Payments -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="dashboard-card">
+                    <h5><i class="bi bi-arrow-left-right me-2"></i>Transactions Récentes</h5>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Client</th>
+                                    <th>Montant</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($transactionsRecent as $transaction)
+                                    <tr>
+                                        <td>{{ \Carbon\Carbon::parse($transaction->date_transact)->format('d/m/Y') }}</td>
+                                        <td>{{ $transaction->client->nom_cli ?? 'N/A' }} {{ $transaction->client->prenom_cli ?? '' }}</td>
+                                        <td><strong>{{ number_format($transaction->montant_transact, 0, ',', ' ') }} FCFA</strong></td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="3" class="text-center text-muted">Aucune transaction récente</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="dashboard-card">
+                    <h5><i class="bi bi-cash-coin me-2"></i>Paiements Récents</h5>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Client</th>
+                                    <th>Montant</th>
+                                    <th>Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($paiementsRecent as $paiement)
+                                    <tr>
+                                        <td>{{ \Carbon\Carbon::parse($paiement->date_paie)->format('d/m/Y') }}</td>
+                                        <td>{{ $paiement->client->nom_cli ?? 'N/A' }} {{ $paiement->client->prenom_cli ?? '' }}</td>
+                                        <td><strong>{{ number_format($paiement->montant_paie, 0, ',', ' ') }} FCFA</strong></td>
+                                        <td>
+                                            @if($paiement->statut_paie == 'validé')
+                                                <span class="badge bg-success">Validé</span>
+                                            @elseif($paiement->statut_paie == 'en_attente')
+                                                <span class="badge bg-warning">En attente</span>
+                                            @else
+                                                <span class="badge bg-danger">Rejeté</span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted">Aucun paiement récent</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Historique complet des transactions -->
+        <div class="row">
+            <div class="col-12">
+                <div class="dashboard-card">
+                    <h5><i class="bi bi-clock-history me-2"></i>Historique des Transactions</h5>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Client</th>
+                                    <th>Montant</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($transactions as $transaction)
+                                    <tr>
+                                        <td>{{ \Carbon\Carbon::parse($transaction->date_transact)->format('d/m/Y H:i') }}</td>
+                                        <td>
+                                            <strong>{{ $transaction->client->nom_cli ?? 'N/A' }} {{ $transaction->client->prenom_cli ?? '' }}</strong>
+                                            @if($transaction->client)
+                                                <br><small class="text-muted">{{ $transaction->client->tel_cli ?? '' }}</small>
+                                            @endif
+                                        </td>
+                                        <td><strong class="text-success">{{ number_format($transaction->montant_transact, 0, ',', ' ') }} FCFA</strong></td>
+                                        <td>
+                                            <span class="badge bg-info">Transaction #{{ $transaction->id_transact }}</span>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted">Aucune transaction enregistrée</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Pagination -->
+                    <div class="mt-3">
+                        {{ $transactions->links() }}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <footer class="footer">
-        <div class="footer-links">
-            <a href="#">Aide</a>
-            <a href="#">Contact support</a>
-            <a href="#">Mentions légales</a>
-        </div>
-        &copy; {{ date('Y') }} MonApplication • Interface Collecteur moderne
-    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Mobile menu toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.querySelector('.sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        
+        function toggleSidebar() {
+            sidebar.classList.toggle('active');
+            sidebarOverlay.classList.toggle('active');
+        }
+        
+        menuToggle.addEventListener('click', toggleSidebar);
+        sidebarOverlay.addEventListener('click', toggleSidebar);
+        
+        // Close sidebar when clicking on a link (mobile)
+        if (window.innerWidth <= 768) {
+            const sidebarLinks = document.querySelectorAll('.sidebar-menu a');
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    sidebar.classList.remove('active');
+                    sidebarOverlay.classList.remove('active');
+                });
+            });
+        }
+    </script>
 </body>
 </html>
