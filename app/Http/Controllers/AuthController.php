@@ -16,13 +16,13 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-
             $user = Auth::user();
 
+            // Redirection selon le rôle AVEC le popup de succès
             return match ($user->role) {
-                'admin' => redirect()->route('admin.dashboard'),
-                'collecteur' => redirect()->route('collecteur.dashboard'),
-                'client' => redirect()->route('client.dashboard'),
+                'admin' => redirect()->route('admin.dashboard')->with('login_success', true),
+                'collecteur' => redirect()->route('collecteur.dashboard')->with('login_success', true),
+                'client' => redirect()->route('client.dashboard')->with('login_success', true),
             };
         }
 

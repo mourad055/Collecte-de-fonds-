@@ -121,6 +121,23 @@
                         <label for="zone_collect" class="form-label">Zone <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="zone_collect" name="zone_collect" required>
                     </div>
+                    <hr class="mt-4 mb-3">
+                    <div class="col-12">
+                        <h5>Compte d'accès pour le collecteur (optionnel)</h5>
+                        <p class="text-muted mb-3">En renseignant un email et un mot de passe, un compte de connexion sera créé pour ce collecteur.</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="user_email" class="form-label">Email de connexion</label>
+                        <input type="email" class="form-control" id="user_email" name="user_email" placeholder="email@exemple.com">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="user_password" class="form-label">Mot de passe</label>
+                        <input type="password" class="form-control" id="user_password" name="user_password">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="user_password_confirmation" class="form-label">Confirmer le mot de passe</label>
+                        <input type="password" class="form-control" id="user_password_confirmation" name="user_password_confirmation">
+                    </div>
                 </div>
                 <div class="mt-4">
                     <button type="submit" class="btn btn-success">

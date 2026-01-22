@@ -125,6 +125,23 @@
                         <label for="solde_cli" class="form-label">Solde Initial <span class="text-danger">*</span></label>
                         <input type="number" step="0.01" class="form-control" id="solde_cli" name="solde_cli" value="0" required>
                     </div>
+                    <hr class="mt-4 mb-3">
+                    <div class="col-12">
+                        <h5>Compte d'accès pour le client (optionnel)</h5>
+                        <p class="text-muted mb-3">Si vous renseignez un email et un mot de passe, un compte utilisateur sera créé pour permettre au client de se connecter.</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="user_email" class="form-label">Email de connexion</label>
+                        <input type="email" class="form-control" id="user_email" name="user_email" placeholder="email@exemple.com">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="user_password" class="form-label">Mot de passe</label>
+                        <input type="password" class="form-control" id="user_password" name="user_password">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="user_password_confirmation" class="form-label">Confirmer le mot de passe</label>
+                        <input type="password" class="form-control" id="user_password_confirmation" name="user_password_confirmation">
+                    </div>
                 </div>
                 <div class="mt-4">
                     <button type="submit" class="btn btn-success">

@@ -4,6 +4,7 @@
     </div>
     <ul class="sidebar-menu">
         <li><a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+        <li><a href="{{ route('admin.admins') }}" class="{{ request()->routeIs('admin.admins*') ? 'active' : '' }}"><i class="bi bi-shield-lock"></i> Administrateurs</a></li>
         <li><a href="{{ route('admin.collecteurs') }}" class="{{ request()->routeIs('admin.collecteurs*') ? 'active' : '' }}"><i class="bi bi-people"></i> Collecteurs</a></li>
         <li><a href="{{ route('admin.clients') }}" class="{{ request()->routeIs('admin.clients*') ? 'active' : '' }}"><i class="bi bi-person-badge"></i> Clients</a></li>
         <li><a href="{{ route('admin.transactions') }}" class="{{ request()->routeIs('admin.transactions') ? 'active' : '' }}"><i class="bi bi-arrow-left-right"></i> Transactions</a></li>

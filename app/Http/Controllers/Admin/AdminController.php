@@ -7,8 +7,11 @@ use App\Models\Client;
 use App\Models\Collecteur;
 use App\Models\Transaction;
 use App\Models\Paiement;
+use App\Models\Administrateur;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 
 class AdminController extends Controller
@@ -121,14 +124,26 @@ class AdminController extends Controller
             'prenom_collect' => 'required|string|max:100',
             'tel_collect' => 'required|string|max:20',
             'zone_collect' => 'required|string|max:255',
+            'user_email' => 'nullable|email|unique:users,email',
+            'user_password' => 'nullable|string|min:6|confirmed',
         ]);
         
-        Collecteur::create($request->only([
+        $collecteur = Collecteur::create($request->only([
             'nom_collect',
             'prenom_collect',
             'tel_collect',
             'zone_collect'
         ]));
+
+        // Création optionnelle d'un compte utilisateur lié au collecteur
+        if ($request->filled('user_email') && $request->filled('user_password')) {
+            User::create([
+                'email' => $request->user_email,
+                'password' => Hash::make($request->user_password),
+                'role' => 'collecteur',
+                'related_id' => $collecteur->id_collect,
+            ]);
+        }
         
         return redirect()->route('admin.collecteurs')
             ->with('success', 'Collecteur ajouté avec succès');
@@ -211,15 +226,27 @@ class AdminController extends Controller
             'tel_cli' => 'required|string|max:20',
             'adresse_cli' => 'required|string|max:255',
             'solde_cli' => 'required|numeric|min:0',
+            'user_email' => 'nullable|email|unique:users,email',
+            'user_password' => 'nullable|string|min:6|confirmed',
         ]);
         
-        Client::create($request->only([
+        $client = Client::create($request->only([
             'nom_cli',
             'prenom_cli',
             'tel_cli',
             'adresse_cli',
             'solde_cli'
         ]));
+
+        // Création optionnelle d'un compte utilisateur lié au client
+        if ($request->filled('user_email') && $request->filled('user_password')) {
+            User::create([
+                'email' => $request->user_email,
+                'password' => Hash::make($request->user_password),
+                'role' => 'client',
+                'related_id' => $client->id_cli,
+            ]);
+        }
         
         return redirect()->route('admin.clients')
             ->with('success', 'Client ajouté avec succès');
@@ -384,6 +411,56 @@ class AdminController extends Controller
         ];
         
         return view('admin.rapports.statistiques', compact('stats', 'periode'));
+    }
+
+    /**
+     * Liste des administrateurs
+     */
+    public function admins()
+    {
+        $admins = Administrateur::orderBy('created_at', 'desc')->get();
+
+        return view('admin.admins.index', compact('admins'));
+    }
+
+    /**
+     * Formulaire de création d'un nouvel administrateur
+     */
+    public function createAdmin()
+    {
+        return view('admin.admins.create');
+    }
+
+    /**
+     * Enregistrer un nouvel administrateur + compte utilisateur associé
+     */
+    public function storeAdmin(Request $request)
+    {
+        $request->validate([
+            'nom_admin' => 'required|string|max:100',
+            'prenom_admin' => 'required|string|max:100',
+            'email_admin' => 'required|email|unique:administrateurs,email_admin|unique:users,email',
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
+        $admin = Administrateur::create([
+            'nom_admin' => $request->nom_admin,
+            'prenom_admin' => $request->prenom_admin,
+            'email_admin' => $request->email_admin,
+            'role_admin' => 'admin',
+            'password' => Hash::make($request->password),
+        ]);
+
+        User::create([
+            'email' => $request->email_admin,
+            'password' => Hash::make($request->password),
+            'role' => 'admin',
+            'related_id' => $admin->id_admin,
+        ]);
+
+        return redirect()
+            ->route('admin.admins')
+            ->with('success', 'Administrateur créé avec succès');
     }
 }
 

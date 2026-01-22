@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PaiementController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\CollecteurController;
+use App\Http\Controllers\ChatAssistantController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -21,7 +22,18 @@ use App\Http\Controllers\CollecteurController;
 //route page accueil
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('home');;
+
+// Route Fonctionnement
+Route::get('/fonctionnement', function () {
+    return view('fonctionnement');
+})->name('fonctionnement');
+
+// Route Contact
+Route::get('/contact', function () {
+    return view('contact');
+})->name('contact');
+
 
 
 
@@ -88,6 +100,11 @@ Route::middleware('auth')->group(function () {
         // Rapports
         Route::get('/rapport/financier', [AdminController::class, 'exportRapportFinancier'])->name('rapport.financier');
         Route::get('/statistiques', [AdminController::class, 'exportStatistiques'])->name('statistiques');
+
+        // Gestion des administrateurs
+        Route::get('/admins', [AdminController::class, 'admins'])->name('admins');
+        Route::get('/admins/create', [AdminController::class, 'createAdmin'])->name('admins.create');
+        Route::post('/admins', [AdminController::class, 'storeAdmin'])->name('admins.store');
     });
 
     Route::get('/collecteur/dashboard', [CollecteurController::class, 'dashboard'])->name('collecteur.dashboard');
@@ -125,6 +142,9 @@ Route::middleware(['auth'])->group(function () {
         ->name('client.dashboard');
 });
 
+Route::post('/assistant/chat', [ChatAssistantController::class, 'ask'])
+    ->middleware('auth')
+    ->name('assistant.chat');
 
 
 Route::get('/check-backend', function () {

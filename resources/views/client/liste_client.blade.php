@@ -2,243 +2,299 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Liste des clients</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des clients | Collecte+</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tabler Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0E8D4D',
+                        'primary-dark': '#0b6f3d'
+                    },
+                    keyframes: {
+                        slideDown: {
+                            '0%': { opacity: '0', transform: 'translateY(-30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        },
+                        scaleIn: {
+                            '0%': { transform: 'scale(0.9)', opacity: '0' },
+                            '100%': { transform: 'scale(1)', opacity: '1' }
+                        }
+                    },
+                    animation: {
+                        'slide-down': 'slideDown 0.5s ease-out',
+                        'fade-in': 'fadeIn 0.6s ease-out',
+                        'scale-in': 'scaleIn 0.4s ease-out'
+                    }
+                }
+            }
+        }
+    </script>
+    
     <style>
-        :root {
-            --vert: #0E8D4D;
-            --vert-fonce: #0b6f3d;
-            --blanc: #fff;
-            --gris-clair: #f8f9fa;
-            --gris: #e0e0e0;
-            --ombre: 0 6px 30px 3px rgba(14, 141, 77, 0.11);
-        }
-
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            margin: 0;
-            background: var(--gris-clair);
-            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
         }
-
-        header {
-            background: linear-gradient(90deg, var(--vert), #19ce80 90%);
-            padding: 45px 0 22px 0;
-            box-shadow: var(--ombre);
-            text-align: center;
-            border-bottom-left-radius: 28px;
-            border-bottom-right-radius: 28px;
-            margin-bottom: 26px;
+        
+        .client-card {
+            transition: all 0.3s ease;
         }
-
-        h2 {
-            margin: 0;
-            color: var(--blanc);
-            font-size: 2.7em;
-            letter-spacing: 2px;
-            font-weight: 900;
-            text-shadow: 2px 4px 14px rgba(14, 141, 77, 0.12);
+        
+        .client-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(14, 141, 77, 0.15);
         }
-
-        .container {
-            max-width: 1100px;
-            margin: 0 auto 35px auto;
-            background: var(--blanc);
-            border-radius: 24px;
-            box-shadow: var(--ombre);
-            padding: 40px 38px 35px 38px;
-            position: relative;
-        }
-
-        .success-message {
-            color: var(--vert);
-            background: #e9ffe9;
-            border-radius: 10px;
-            padding: 16px 24px;
-            margin-bottom: 28px;
-            font-size: 1.08em;
-            box-shadow: 0 1px 5px 0 rgba(14, 141, 77, 0.06);
-            text-align: center;
-            border-left: 6px solid var(--vert);
-            font-weight: 600;
-        }
-
-        .table-wrapper {
-            overflow-x: auto;
-            border-radius: 14px;
-        }
-
-        table {
-            border-collapse: separate;
-            border-spacing: 0;
-            width: 100%;
-            min-width: 700px;
-            background: var(--blanc);
-            margin-top: 10px;
-            border-radius: 14px;
-            overflow: hidden;
-            box-shadow: var(--ombre);
-        }
-
-        th {
-            background: linear-gradient(90deg, var(--vert), #19ce80 80%);
-            color: var(--blanc);
-            padding: 20px 10px;
-            font-size: 1.13em;
-            font-weight: 700;
-            letter-spacing: 1px;
-            border: none;
-            text-align: center;
-        }
-
-        td {
-            padding: 16px 9px;
-            text-align: center;
-            border-bottom: 1.5px solid var(--gris);
-            background: var(--blanc);
-            font-size: 1.04em;
-        }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        .btn, button.btn {
-            background: linear-gradient(90deg, var(--vert), #19ce80 80%);
-            color: var(--blanc);
-            border: none;
-            padding: 10px 19px;
-            margin: 4px 2px;
-            border-radius: 22px;
+        
+        .fab-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #0E8D4D 0%, #47a55e 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 30px rgba(14, 141, 77, 0.4);
             cursor: pointer;
-            font-size: 1em;
-            font-weight: 600;
-            transition: background 0.18s, transform 0.13s, box-shadow 0.12s;
-            text-decoration: none;
-            display: inline-block;
-            box-shadow: 0 2px 10px 0 rgba(14, 141, 77, 0.08);
-            outline: none;
+            transition: all 0.3s ease;
+            z-index: 50;
         }
-
-        .btn:hover, button.btn:hover, .btn:focus-visible, button.btn:focus-visible {
-            background: linear-gradient(90deg, var(--vert-fonce), #19ce80 65%);
-            transform: translateY(-2px) scale(1.06);
-            box-shadow: 0 4px 20px 0 rgba(14, 141, 77, 0.12);
+        
+        .fab-button:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 12px 40px rgba(14, 141, 77, 0.5);
         }
-
-        a.btn.add {
-            margin-top: 36px;
-            font-size: 1.19em;
-            padding: 15px 48px;
-            font-weight: bold;
-            border: 3px solid #19ce80;
-        }
-
-        @media (max-width: 1020px) {
-            .container { padding: 18px 8px 16px 8px; }
-            th, td { padding: 11px 6px; font-size: 0.96em; }
-            h2 { font-size: 2em; }
-        }
-
-        @media (max-width: 700px) {
-            .container { padding: 4vw 0.5vw 2vw 0.5vw; }
-            th, td { padding: 7px 2px; font-size: 0.92em; }
-            h2 { font-size: 1.15em; }
-            table {
-                min-width: 400px;
+        
+        @media (max-width: 640px) {
+            .fab-button {
+                width: 60px;
+                height: 60px;
+                bottom: 20px;
+                right: 20px;
             }
-        }
-
-        /* Extra professional touch: Floating plus button on mobile */
-        @media (max-width: 600px) {
-            a.btn.add {
-                position: fixed;
-                right: 18px;
-                bottom: 18px;
-                border-radius: 100%;
-                padding: 17px 0;
-                width: 62px;
-                height: 62px;
-                font-size: 2em;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                box-shadow: 0 4px 20px 0 rgba(14, 141, 77, 0.14);
-                z-index: 9999;
-                margin-top: 0;
-            }
-            .add-text {
-                display: none;
-            }
-            .add-icon {
-                display: inline;
-            }
-        }
-        @media (min-width: 601px) {
-            .add-icon { display: none }
         }
     </style>
 </head>
-<body>
+<body class="min-h-screen pb-24">
 
-<header>
-    <h2>Liste des clients enregistrés</h2>
-</header>
-
-<div class="container">
-    @if(session('success'))
-        <div class="success-message">{{ session('success') }}</div>
-    @endif
-
-    <div class="table-wrapper">
-    <table>
-        <tr>
-            <th>Nom</th>
-            <th>Prénom</th>
-            <th>Téléphone</th>
-            <th>Adresse</th>
-            <th>Solde</th>
-            <th>Actions</th>
-        </tr>
-
-        @forelse($clients as $client)
-            <tr>
-                <td>{{ $client->nom_cli }}</td>
-                <td>{{ $client->prenom_cli }}</td>
-                <td>{{ $client->tel_cli }}</td>
-                <td>{{ $client->adresse_cli }}</td>
-                <td>{{ $client->solde_cli }}</td>
-                <td>
-                    <a href="{{ route('clients.edit', $client->id_cli) }}" class="btn" title="Modifier">
-                        <svg width="17" height="17" fill="none" viewBox="0 0 24 24" style="vertical-align: middle; margin-bottom: -3px;"><path d="M15.232 5.232a2 2 0 012.828 2.828l-.586.586-2.828-2.828.586-.586zm-1.414 1.414L4 16.464V20h3.536l9.818-9.818-2.828-2.828z" fill="white"/></svg>
-                    </a>
-                    <form action="{{ route('clients.destroy', $client->id_cli) }}" method="POST" style="display:inline;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn" onclick="return confirm('Supprimer ce client ?')" title="Supprimer">
-                            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" style="vertical-align: middle; margin-bottom: -3px;"><path d="M6 19a2 2 0 002 2h8a2 2 0 002-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" fill="white"/></svg>
-                        </button>
-                    </form>
-                </td>
-            </tr>
-        @empty
-            <tr>
-                <td colspan="6" style="color:#888;font-style:italic;">Aucun client trouvé dans la base.</td>
-            </tr>
-        @endforelse
-    </table>
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-primary to-green-600 shadow-2xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Bouton retour -->
+            <div class="mb-6 animate-slide-down">
+                <a href="{{ route('collecteur.dashboard') }}" 
+                   class="inline-flex items-center gap-2 px-6 py-3 bg-white/20 backdrop-blur-md rounded-xl text-white hover:bg-white/30 transition-all group">
+                    <i class="ti ti-arrow-left text-xl group-hover:-translate-x-1 transition-transform"></i>
+                    <span class="font-semibold">Retour au dashboard</span>
+                </a>
+            </div>
+            
+            <!-- Titre et stats -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 text-white animate-fade-in">
+                <div>
+                    <h1 class="text-4xl md:text-5xl font-extrabold mb-2 flex items-center gap-3">
+                        <i class="ti ti-users text-5xl"></i>
+                        Mes Clients
+                    </h1>
+                    <p class="text-white/90 text-lg">Gérez tous vos clients en un seul endroit</p>
+                </div>
+                <div class="flex gap-4">
+                    <div class="bg-white/20 backdrop-blur-md px-6 py-4 rounded-2xl text-center">
+                        <p class="text-3xl font-bold">{{ count($clients) }}</p>
+                        <p class="text-sm text-white/90">Clients</p>
+                    </div>
+                    <div class="bg-white/20 backdrop-blur-md px-6 py-4 rounded-2xl text-center">
+                        <p class="text-3xl font-bold">{{ number_format($clients->sum('solde_cli'), 0, ',', ' ') }}</p>
+                        <p class="text-sm text-white/90">Solde total (FCFA)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <a href="{{ route('clients.create') }}" class="btn add"
-        title="Ajouter un client">
-        <span class="add-text">+ Ajouter un client</span>
-        <span class="add-icon">+</span>
-    </a>
-</div>
+    <!-- Message de succès -->
+    @if(session('success'))
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 animate-scale-in">
+            <div class="bg-green-50 border-l-4 border-green-500 rounded-xl p-4 shadow-lg flex items-center gap-3">
+                <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                    <i class="ti ti-check text-white text-xl"></i>
+                </div>
+                <p class="text-green-800 font-semibold">{{ session('success') }}</p>
+            </div>
+        </div>
+    @endif
 
-<!-- 
-ROUTE À AJOUTER DANS routes/web.php :
-Route::resource('clients', \App\Http\Controllers\ClientController::class);
--->
+    <!-- Barre de recherche et filtres -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+        <div class="bg-white rounded-2xl shadow-lg p-6 mb-8 animate-scale-in">
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="flex-1 relative">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <i class="ti ti-search text-gray-400 text-xl"></i>
+                    </div>
+                    <input type="text" 
+                           id="searchInput"
+                           placeholder="Rechercher un client (nom, prénom, téléphone...)" 
+                           class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all">
+                </div>
+                <button class="px-6 py-3 bg-gradient-to-r from-primary to-green-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all flex items-center gap-2">
+                    <i class="ti ti-filter"></i>
+                    <span>Filtrer</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Liste des clients -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        @forelse($clients as $index => $client)
+            <div class="client-card bg-white rounded-2xl shadow-lg p-6 mb-6 animate-fade-in" style="animation-delay: {{ $index * 0.05 }}s">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                    
+                    <!-- Info client -->
+                    <div class="flex items-start gap-4 flex-1">
+                        <!-- Avatar -->
+                        <div class="w-16 h-16 bg-gradient-to-br from-primary to-green-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold flex-shrink-0">
+                            {{ strtoupper(substr($client->nom_cli, 0, 1)) }}{{ strtoupper(substr($client->prenom_cli, 0, 1)) }}
+                        </div>
+                        
+                        <!-- Details -->
+                        <div class="flex-1 min-w-0">
+                            <h3 class="text-xl font-bold text-gray-800 mb-1">{{ $client->nom_cli }} {{ $client->prenom_cli }}</h3>
+                            <div class="flex flex-wrap gap-4 text-sm text-gray-600">
+                                <span class="flex items-center gap-1">
+                                    <i class="ti ti-phone text-primary"></i>
+                                    {{ $client->tel_cli }}
+                                </span>
+                                <span class="flex items-center gap-1">
+                                    <i class="ti ti-map-pin text-primary"></i>
+                                    {{ $client->adresse_cli }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Solde et actions -->
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                        <!-- Solde -->
+                        <div class="bg-gradient-to-br from-green-50 to-green-100 px-6 py-3 rounded-xl border-2 border-green-200">
+                            <p class="text-xs text-gray-600 mb-1">Solde</p>
+                            <p class="text-2xl font-bold text-primary">{{ number_format($client->solde_cli, 0, ',', ' ') }}</p>
+                            <p class="text-xs text-gray-500">FCFA</p>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="flex gap-2">
+                            <a href="{{ route('clients.edit', $client->id_cli) }}" 
+                               class="w-12 h-12 bg-blue-100 hover:bg-blue-500 text-blue-600 hover:text-white rounded-xl flex items-center justify-center transition-all hover:scale-110"
+                               title="Modifier">
+                                <i class="ti ti-edit text-xl"></i>
+                            </a>
+                            <form action="{{ route('clients.destroy', $client->id_cli) }}" method="POST" class="inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" 
+                                        onclick="return confirm('Êtes-vous sûr de vouloir supprimer {{ $client->nom_cli }} {{ $client->prenom_cli }} ?')"
+                                        class="w-12 h-12 bg-red-100 hover:bg-red-500 text-red-600 hover:text-white rounded-xl flex items-center justify-center transition-all hover:scale-110"
+                                        title="Supprimer">
+                                    <i class="ti ti-trash text-xl"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        @empty
+            <div class="bg-white rounded-2xl shadow-lg p-16 text-center animate-scale-in">
+                <div class="w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="ti ti-user-x text-6xl text-gray-400"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-3">Aucun client trouvé</h3>
+                <p class="text-gray-600 mb-8">Commencez par ajouter votre premier client</p>
+                <a href="{{ route('clients.create') }}" 
+                   class="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-primary to-green-600 text-white rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all">
+                    <i class="ti ti-plus text-xl"></i>
+                    Ajouter un client
+                </a>
+            </div>
+        @endforelse
+
+    </div>
+
+    <!-- Bouton flottant d'ajout (FAB) -->
+    @if(count($clients) > 0)
+        <a href="{{ route('clients.create') }}" class="fab-button group" title="Ajouter un client">
+            <i class="ti ti-plus text-4xl text-white"></i>
+        </a>
+    @endif
+
+    <!-- Pagination (si nécessaire) -->
+    @if(method_exists($clients, 'links'))
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+            {{ $clients->links() }}
+        </div>
+    @endif
+
+    <script>
+        // Recherche en temps réel
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const clientCards = document.querySelectorAll('.client-card');
+            
+            clientCards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    card.style.display = 'block';
+                    card.classList.add('animate-fade-in');
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Animation au scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.client-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        // Confirmation de suppression améliorée
+        document.querySelectorAll('form[action*="destroy"]').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const clientName = this.closest('.client-card').querySelector('h3').textContent;
+                if (!confirm(`⚠️ Voulez-vous vraiment supprimer ${clientName} ?\n\nCette action est irréversible.`)) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+
 </body>
-</html> 
+</html>
