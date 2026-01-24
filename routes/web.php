@@ -29,3 +29,18 @@ Route::get('/check-backend', function () {
         return "Erreur : " . $e->getMessage();
     }
 });
+<?php
+
+use App\Http\Controllers\TransactionController;
+use Illuminate\Support\Facades\Route;
+
+// Routes pour les transactions
+Route::resource('transactions', TransactionController::class);
+
+// Route pour exporter les transactions
+Route::get('transactions-export', [TransactionController::class, 'export'])->name('transactions.export');
+
+// Route d'accueil (optionnel)
+Route::get('/', function () {
+    return redirect()->route('transactions.index');
+});
