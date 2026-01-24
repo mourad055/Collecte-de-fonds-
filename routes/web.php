@@ -1,51 +1,53 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ClientController;
 use Illuminate\Http\Request;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\PaiementController;
-use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\CollecteurController;
-use App\Http\Controllers\ChatAssistantController;
+
 /*
 |--------------------------------------------------------------------------
-| Web Routes
+| Controllers
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
 */
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\PaiementController;
+use App\Http\Controllers\CollecteurController;
+use App\Http\Controllers\ChatAssistantController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\EncaissementController;
 
-//route page accueil
+/*
+|--------------------------------------------------------------------------
+| Pages publiques
+|--------------------------------------------------------------------------
+*/
 Route::get('/', function () {
     return view('welcome');
-})->name('home');;
+})->name('home');
 
-// Route Fonctionnement
-Route::get('/fonctionnement', function () {
-    return view('fonctionnement');
-})->name('fonctionnement');
+Route::view('/fonctionnement', 'fonctionnement')->name('fonctionnement');
+Route::view('/contact', 'contact')->name('contact');
 
-// Route Contact
-Route::get('/contact', function () {
-    return view('contact');
-})->name('contact');
+/*
+|--------------------------------------------------------------------------
+| Authentification
+|--------------------------------------------------------------------------
+*/
+Route::get('/login', fn () => view('auth.login'))->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-
-
-
-
+/*
+|--------------------------------------------------------------------------
+| Paiements & Reçus
+|--------------------------------------------------------------------------
+*/
 Route::get('/paiement', [PaiementController::class, 'create'])->name('paiement');
 Route::post('/paiement', [PaiementController::class, 'store'])->name('paiement.store');
-// (optionnel - pour une page listant les paiements)
 Route::get('/paiements', [PaiementController::class, 'index'])->name('paiements.index');
 
 Route::post('/recu/pdf', function (Request $request) {
-
-    // Pour l’instant, on teste juste
     return view('recu.generate', [
         'numero_recu'   => 'RCU-' . date('Ymd') . '-' . rand(1000, 9999),
         'nom'           => $request->nom,
@@ -54,99 +56,113 @@ Route::post('/recu/pdf', function (Request $request) {
         'mode_paiement' => $request->mode_paiement,
         'date_paiement' => $request->date_paiement,
     ]);
-
 })->name('recu.pdf');
 
-
-//route page login avec authentification
-Route::get('/login', function () {
-    return view('auth.login');
-})->name('login');
-
-Route::post('/login', [AuthController::class, 'login']);
-
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
+/*
+|--------------------------------------------------------------------------
+| Routes protégées (auth)
+|--------------------------------------------------------------------------
+*/
 Route::middleware('auth')->group(function () {
 
-    // Routes Admin
+    /*
+    |--------------------------------------------------------------------------
+    | Dashboard Admin
+    |--------------------------------------------------------------------------
+    */
     Route::prefix('admin')->name('admin.')->group(function () {
-        Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
-        
-        // Gestion des collecteurs
-        Route::get('/collecteurs', [AdminController::class, 'collecteurs'])->name('collecteurs');
-        Route::get('/collecteurs/create', [AdminController::class, 'createCollecteur'])->name('collecteurs.create');
-        Route::post('/collecteurs', [AdminController::class, 'storeCollecteur'])->name('collecteurs.store');
-        Route::get('/collecteurs/{id}/edit', [AdminController::class, 'editCollecteur'])->name('collecteurs.edit');
-        Route::put('/collecteurs/{id}', [AdminController::class, 'updateCollecteur'])->name('collecteurs.update');
-        Route::delete('/collecteurs/{id}', [AdminController::class, 'destroyCollecteur'])->name('collecteurs.destroy');
-        
-        // Gestion des clients
-        Route::get('/clients', [AdminController::class, 'clients'])->name('clients');
-        Route::get('/clients/create', [AdminController::class, 'createClient'])->name('clients.create');
-        Route::post('/clients', [AdminController::class, 'storeClient'])->name('clients.store');
-        Route::get('/clients/{id}/edit', [AdminController::class, 'editClient'])->name('clients.edit');
-        Route::put('/clients/{id}', [AdminController::class, 'updateClient'])->name('clients.update');
-        Route::delete('/clients/{id}', [AdminController::class, 'destroyClient'])->name('clients.destroy');
-        
-        // Transactions
-        Route::get('/transactions', [AdminController::class, 'transactions'])->name('transactions');
-        
-        // Encaissements
-        Route::get('/encaissements', [AdminController::class, 'encaissements'])->name('encaissements');
-        Route::post('/encaissements/{id}/valider', [AdminController::class, 'validerPaiement'])->name('encaissements.valider');
-        Route::post('/encaissements/{id}/rejeter', [AdminController::class, 'rejeterPaiement'])->name('encaissements.rejeter');
-        
-        // Rapports
-        Route::get('/rapport/financier', [AdminController::class, 'exportRapportFinancier'])->name('rapport.financier');
-        Route::get('/statistiques', [AdminController::class, 'exportStatistiques'])->name('statistiques');
 
-        // Gestion des administrateurs
-        Route::get('/admins', [AdminController::class, 'admins'])->name('admins');
-        Route::get('/admins/create', [AdminController::class, 'createAdmin'])->name('admins.create');
-        Route::post('/admins', [AdminController::class, 'storeAdmin'])->name('admins.store');
+        Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+
+        // Collecteurs
+        Route::resource('collecteurs', CollecteurController::class);
+
+        // Clients
+        Route::resource('clients', ClientController::class);
+
+        // Transactions & Encaissements (vue admin)
+        Route::get('/transactions', [AdminController::class, 'transactions'])->name('transactions');
+        Route::get('/encaissements', [AdminController::class, 'encaissements'])->name('encaissements');
+
+        Route::post('/encaissements/{id}/valider', [AdminController::class, 'validerPaiement'])
+            ->name('encaissements.valider');
+
+        Route::post('/encaissements/{id}/rejeter', [AdminController::class, 'rejeterPaiement'])
+            ->name('encaissements.rejeter');
+
+        // Rapports
+        Route::get('/rapport/financier', [AdminController::class, 'exportRapportFinancier'])
+            ->name('rapport.financier');
+
+        Route::get('/statistiques', [AdminController::class, 'exportStatistiques'])
+            ->name('statistiques');
+
+        // Administrateurs
+        Route::resource('admins', AdminController::class)->only(['index', 'create', 'store']);
     });
 
-    Route::get('/collecteur/dashboard', [CollecteurController::class, 'dashboard'])->name('collecteur.dashboard');
+    /*
+    |--------------------------------------------------------------------------
+    | Dashboards
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/collecteur/dashboard', [CollecteurController::class, 'dashboard'])
+        ->name('collecteur.dashboard');
 
-});
-
-Route::get('/clients/create', [ClientController::class, 'create'])
-    ->name('clients.create');
-
-// Enregistrer un client (après clic sur "Enregistrer")
-Route::post('/clients', [ClientController::class, 'store'])
-    ->name('clients.store');
-
-// Afficher la liste des clients
-Route::get('/clients', [ClientController::class, 'index'])
-    ->name('clients.index');
-
-// Afficher le formulaire de modification
-Route::get('/clients/{id}/edit', [ClientController::class, 'edit'])
-    ->name('clients.edit');
-
-// Mettre à jour un client
-Route::put('/clients/{id}', [ClientController::class, 'update'])
-    ->name('clients.update');
-
-// Supprimer un client
-Route::delete('/clients/{id}', [ClientController::class, 'destroy'])
-    ->name('clients.destroy');
-
-// Route resource pour les clients
-Route::resource('clients', ClientController::class);
-
-Route::middleware(['auth'])->group(function () {
     Route::get('/client/dashboard', [ClientController::class, 'dashboard'])
         ->name('client.dashboard');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Assistant IA
+    |--------------------------------------------------------------------------
+    */
+    Route::post('/assistant/chat', [ChatAssistantController::class, 'ask'])
+        ->name('assistant.chat');
 });
 
-Route::post('/assistant/chat', [ChatAssistantController::class, 'ask'])
-    ->middleware('auth')
-    ->name('assistant.chat');
+/*
+|--------------------------------------------------------------------------
+| Transactions
+|--------------------------------------------------------------------------
+*/
+Route::resource('transactions', TransactionController::class);
+Route::get('transactions-export', [TransactionController::class, 'export'])
+    ->name('transactions.export');
 
+/*
+|--------------------------------------------------------------------------
+| Encaissements (logique métier)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('encaissements')->name('encaissements.')->group(function () {
 
+    Route::get('controle', [EncaissementController::class, 'index'])->name('controle');
+    Route::get('{id}', [EncaissementController::class, 'show'])->name('show');
+
+    Route::post('{id}/valider', [EncaissementController::class, 'valider'])->name('valider');
+    Route::post('{id}/rejeter', [EncaissementController::class, 'rejeter'])->name('rejeter');
+    Route::post('{id}/en-verification', [EncaissementController::class, 'enVerification'])
+        ->name('en-verification');
+
+    Route::post('{id}/annuler-controle', [EncaissementController::class, 'annulerControle'])
+        ->name('annuler-controle');
+
+    Route::post('valider-en-masse', [EncaissementController::class, 'validerEnMasse'])
+        ->name('valider-en-masse');
+
+    Route::get('exporter-rapport', [EncaissementController::class, 'exporterRapport'])
+        ->name('exporter-rapport');
+
+    Route::get('rapport-synthese', [EncaissementController::class, 'rapportSynthese'])
+        ->name('rapport-synthese');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Test Backend
+|--------------------------------------------------------------------------
+*/
 Route::get('/check-backend', function () {
     try {
         \DB::connection()->getPdo();
