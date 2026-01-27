@@ -65,7 +65,7 @@
             
             <!-- Titre principal -->
             <div class="text-center">
-                <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl mb-4 shadow-lg">
+                <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl mb-4 shadow-lg">
                     <i class="ti ti-user-edit text-4xl text-white"></i>
                 </div>
                 <h1 class="text-4xl font-extrabold text-gray-800 mb-2">Modifier le client</h1>
@@ -79,12 +79,12 @@
             @method('PUT')
 
             <!-- Info card -->
-            <div class="mb-8 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-lg">
+            <div class="mb-8 p-4 bg-green-50 border-l-4 border-green-500 rounded-lg">
                 <div class="flex items-center gap-3">
-                    <i class="ti ti-info-circle text-2xl text-blue-500"></i>
+                    <i class="ti ti-info-circle text-2xl text-green-500"></i>
                     <div>
-                        <p class="text-sm font-semibold text-blue-800 mb-1">Modification en cours</p>
-                        <p class="text-xs text-blue-700">Les modifications seront enregistrées immédiatement après validation</p>
+                        <p class="text-sm font-semibold text-green-800 mb-1">Modification en cours</p>
+                        <p class="text-xs text-green-700">Les modifications seront enregistrées immédiatement après validation</p>
                     </div>
                 </div>
             </div>
@@ -230,7 +230,7 @@
                     Annuler
                 </a>
                 <button type="submit" 
-                        class="flex-1 px-8 py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-2">
+                        class="flex-1 px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-2">
                     <i class="ti ti-device-floppy"></i>
                     Enregistrer les modifications
                 </button>

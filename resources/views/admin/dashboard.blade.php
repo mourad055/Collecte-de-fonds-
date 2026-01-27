@@ -513,41 +513,7 @@
 
         <!-- Recent Transactions and Payments -->
         <div class="row g-4 mb-4">
-            <div class="col-12 col-lg-6">
-                <div class="dashboard-card">
-                    <h5><i class="bi bi-arrow-left-right"></i>Transactions Récentes</h5>
-                    <div class="table-responsive">
-                        <table class="table table-striped mb-0">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Client</th>
-                                    <th>Montant</th>
-                                    <th>Collecteur</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($transactionsRecent as $transaction)
-                                    <tr>
-                                        <td>{{ \Carbon\Carbon::parse($transaction->date_transact)->format('d/m/Y') }}</td>
-                                        <td><strong>{{ $transaction->client->nom_cli ?? 'N/A' }} {{ $transaction->client->prenom_cli ?? '' }}</strong></td>
-                                        <td><span class="badge bg-success">{{ number_format($transaction->montant_transact, 0, ',', ' ') }} FCFA</span></td>
-                                        <td>{{ $transaction->collecteur->nom_collect ?? 'N/A' }}</td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="4" class="text-center text-muted py-4">Aucune transaction récente</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="mt-3">
-                        <a href="{{ route('admin.transactions') }}" class="btn btn-sm btn-outline-primary">Voir toutes les transactions</a>
-                    </div>
-                </div>
-            </div>
-
+           
             <div class="col-12 col-lg-6">
                 <div class="dashboard-card">
                     <h5><i class="bi bi-cash-coin"></i>Paiements Récents</h5>
@@ -567,15 +533,7 @@
                                         <td>{{ \Carbon\Carbon::parse($paiement->date_paie)->format('d/m/Y') }}</td>
                                         <td><strong>{{ $paiement->client->nom_cli ?? 'N/A' }} {{ $paiement->client->prenom_cli ?? '' }}</strong></td>
                                         <td><strong>{{ number_format($paiement->montant_paie, 0, ',', ' ') }} FCFA</strong></td>
-                                        <td>
-                                            @if($paiement->statut_paie == 'validé')
-                                                <span class="badge bg-success"><i class="bi bi-check-circle-fill"></i> Validé</span>
-                                            @elseif($paiement->statut_paie == 'en_attente')
-                                                <span class="badge bg-warning"><i class="bi bi-clock-fill"></i> En attente</span>
-                                            @else
-                                                <span class="badge bg-danger"><i class="bi bi-x-circle-fill"></i> Rejeté</span>
-                                            @endif
-                                        </td>
+                                        
                                     </tr>
                                 @empty
                                     <tr>

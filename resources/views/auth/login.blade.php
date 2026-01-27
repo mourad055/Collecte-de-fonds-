@@ -190,7 +190,7 @@
                         <input type="checkbox" name="remember" class="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer">
                         <span class="text-gray-700 group-hover:text-primary transition-colors">Se souvenir de moi</span>
                     </label>
-                    <a href="#" class="text-primary font-semibold hover:underline hover:text-primary-dark transition-colors">
+                    <a href="{{ route('contact') }}" class="text-primary font-semibold hover:underline hover:text-primary-dark transition-colors">
                         Mot de passe oublié ?
                     </a>
                 </div>

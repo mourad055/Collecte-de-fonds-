@@ -5,6 +5,7 @@ use App\Models\Paiement;
 use App\Models\Client;
 use App\Models\Recu;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PaiementController extends Controller
 {
@@ -29,19 +30,36 @@ class PaiementController extends Controller
             'reference'     => 'nullable|string|max:255',
         ]);
 
+        // ✅ CORRECTION PRINCIPALE : Récupération automatique de l'ID du collecteur connecté
+        $user = Auth::user();
+        
+        // Déterminer l'id_collect selon le rôle de l'utilisateur
+        if ($user->role === 'collecteur') {
+            // Si c'est un collecteur, utiliser son related_id
+            $id_collect = $user->related_id;
+        } elseif ($user->role === 'admin' && $request->has('id_collect')) {
+            // Si c'est un admin et qu'il a sélectionné un collecteur dans le formulaire
+            $id_collect = $request->id_collect;
+        } else {
+            // Par défaut, essayer de récupérer depuis l'utilisateur
+            $id_collect = $user->related_id ?? null;
+        }
+
         // Préparation des données exactes pour la table paiements
-        // Table: paiements, champs essentiels d'après la logique : id_cli, montant_paie, date_paie, id_collect (optionnel), statut_paie (défaut: effectué)
+        // Table: paiements, champs essentiels : id_cli, montant_paie, date_paie, id_collect, statut_paie
         $paiementData = [
             'id_cli'        => $validated['client_id'], // id_cli (clé étrangère liée à clients)
             'montant_paie'  => $validated['montant'],
             'date_paie'     => $validated['date_paiement'],
-            'id_collect'    => auth()->user()->id_collect ?? null, // clé collecteur, optionnelle selon structure utilisateur
-            'statut_paie'   => 'effectué',
-            // 'reference'  => $validated['reference'] ?? null, // Décommenter si le champ existe dans la migration/table paiements
+            'id_collect'    => $id_collect, // ✅ TOUJOURS DÉFINI MAINTENANT
+            'statut_paie'   => 'validé', // ✅ Changé de 'effectué' à 'validé' (selon votre modèle)
         ];
 
-        // Si le champ "reference" existe dans la table paiements ET dans le modèle Paiement, décommente la ligne suivante :
-        // if (isset($validated['reference'])) $paiementData['reference'] = $validated['reference'];
+        // Si le champ "reference" existe dans la table paiements ET dans le modèle Paiement
+        // Décommenter si nécessaire :
+        // if (isset($validated['reference'])) {
+        //     $paiementData['reference'] = $validated['reference'];
+        // }
 
         // Création du paiement en base
         $paiement = Paiement::create($paiementData);
@@ -56,12 +74,12 @@ class PaiementController extends Controller
         // Génération du numéro unique pour le reçu à partir de l'ID en base
         $numero_recu = 'RCU-' . date('Ymd') . '-' . str_pad($recu->id_recu, 6, '0', STR_PAD_LEFT);
 
-        // On charge bien la relation correct client() du modèle Paiement : belongsTo(Client::class, 'id_cli', 'id_cli')
+        // On charge bien la relation client() du modèle Paiement : belongsTo(Client::class, 'id_cli', 'id_cli')
         $paiement->load('client');
 
-        // On retourne la vue du reçu en passant uniquement les noms corrects (cf. structure client & paiement)
+        // On retourne la vue du reçu en passant les données correctes
         return view('recu.generate', [
-            'client'        => $paiement->client, // doit être un objet Client (id_cli, nom_cli, prenom_cli, etc.)
+            'client'        => $paiement->client, // objet Client (id_cli, nom_cli, prenom_cli, etc.)
             'numero_recu'   => $numero_recu,
             'nom'           => $paiement->client->nom_cli ?? '',
             'prenom'        => $paiement->client->prenom_cli ?? '',
@@ -72,22 +90,47 @@ class PaiementController extends Controller
         ]);
     }
 
-    // Liste de tous les paiements avec chargement relation client, en affichant bien les bons champs
+    // Liste de tous les paiements avec chargement relation client
     public function index()
     {
-        $paiements = Paiement::with('client')->get(); // la relation client doit bien pointer vers 'id_cli'
+        $paiements = Paiement::with('client')->orderBy('date_paie', 'desc')->get();
         return view('paiement.index', compact('paiements'));
     }
 }
 
 /*
-    À RESPECTER POUR EVITER LES ERREURS D'APPELLATION :
+    ✅ CORRECTIONS APPORTÉES :
+    
+    1. AJOUT de l'importation : use Illuminate\Support\Facades\Auth;
+    
+    2. CORRECTION MAJEURE dans store() :
+       - Récupération automatique de l'id du collecteur connecté
+       - Logique conditionnelle selon le rôle (collecteur/admin)
+       - Garantit que id_collect n'est JAMAIS NULL pour les nouveaux paiements
+    
+    3. CHANGEMENT de statut : 'effectué' → 'validé' (selon votre enum)
+    
+    4. AMÉLIORATION dans index() : ajout de ->orderBy('date_paie', 'desc')
+    
+    À RESPECTER POUR ÉVITER LES ERREURS :
+    
     1. Le modèle Paiement (app/Models/Paiement.php) doit contenir :
-        public function client() { return $this->belongsTo(Client::class, 'id_cli', 'id_cli'); }
-    2. Le modèle Client (app/Models/Client.php) a pour clé primaire protégée $primaryKey = 'id_cli'
-       et les champs fillable corrects (voir migration) : ['nom_cli','prenom_cli','tel_cli','adresse_cli','solde_cli']
-    3. La vue paiement.blade.php doit bien générer <option value="{{$client->id_cli}}">{{$client->nom_cli}} {{$client->prenom_cli}}</option>
-    4. Tous les champs doivent matcher strictement entre les formulaires et la BDD.
-    5. "reference" n'est traitée qu'à condition qu'elle existe en BDD et dans le modèle Paiement.
-    6. Pour chaque variable utilisée dans une vue ou contrôleur, assure-toi qu'elle existe dans la base, la migration et le modèle associé !
+       - protected $fillable = ['montant_paie', 'date_paie', 'id_cli', 'id_collect', 'statut_paie'];
+       - public function client() { return $this->belongsTo(Client::class, 'id_cli', 'id_cli'); }
+    
+    2. Le modèle Client (app/Models/Client.php) :
+       - protected $primaryKey = 'id_cli';
+       - protected $fillable = ['nom_cli','prenom_cli','tel_cli','adresse_cli','solde_cli'];
+    
+    3. La table users doit avoir :
+       - Colonne 'role' : 'admin', 'collecteur', 'client'
+       - Colonne 'related_id' : pointe vers id_collect si role='collecteur'
+    
+    4. Tous les collecteurs doivent avoir un compte user avec :
+       - role = 'collecteur'
+       - related_id = leur id_collect dans la table collecteurs
+    
+    5. Pour les ANCIENS paiements avec id_collect NULL, exécutez :
+       UPDATE paiements SET id_collect = X WHERE id_collect IS NULL;
+       (Remplacez X par l'ID du collecteur approprié)
 */

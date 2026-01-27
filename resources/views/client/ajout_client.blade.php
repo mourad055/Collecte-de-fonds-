@@ -3,333 +3,574 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulaire d'enregistrement client | Collecte+</title>
+    <title>Ajouter un client | Collecte+</title>
     
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <!-- Tabler Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
     
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#0E8D4D',
-                        'primary-dark': '#0b6f3d'
-                    },
-                    keyframes: {
-                        slideIn: {
-                            '0%': { opacity: '0', transform: 'translateY(-20px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' }
-                        },
-                        fadeIn: {
-                            '0%': { opacity: '0' },
-                            '100%': { opacity: '1' }
-                        }
-                    },
-                    animation: {
-                        'slide-in': 'slideIn 0.5s ease-out',
-                        'fade-in': 'fadeIn 0.6s ease-out'
-                    }
-                }
-            }
-        }
-    </script>
-    
     <style>
-        body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
+        :root {
+            --primary-green: #0E8D4D;
+            --accent-green: #0b6f3d;
+            --sidebar-width: 260px;
         }
         
-        .input-wrapper {
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, #0E8D4D 0%, #0b6f3d 100%);
+            color: white;
+            padding: 20px 0;
+            z-index: 1000;
+            overflow-y: auto;
+            box-shadow: 4px 0 20px rgba(14, 141, 77, 0.15);
+        }
+        
+        .sidebar-brand {
+            padding: 20px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar-menu li {
+            margin: 5px 0;
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: rgba(255,255,255,0.15);
+            border-left: 4px solid white;
+            padding-left: 16px;
+        }
+        
+        .sidebar-menu i {
+            margin-right: 12px;
+            width: 20px;
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 30px;
+            min-height: 100vh;
+        }
+        
+        /* Card Modern */
+        .modern-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(53,92,125,0.12);
+            border: none;
+            padding: 40px;
+            margin-top: 20px;
+        }
+        
+        /* Form Inputs */
+        .form-label {
+            font-weight: 600;
+            color: #23272F;
+            margin-bottom: 8px;
+        }
+        
+        .form-control {
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 12px 16px;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(14, 141, 77, 0.1);
+        }
+        
+        /* Buttons */
+        .btn-success {
+            background: linear-gradient(135deg, #0E8D4D 0%, #47a55e 100%);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 12px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(14, 141, 77, 0.3);
+            transition: all 0.3s;
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(14, 141, 77, 0.4);
+            background: linear-gradient(135deg, #0b6f3d 0%, #0E8D4D 100%);
+        }
+        
+        .btn-secondary {
+            border: 2px solid #6c757d;
+            padding: 12px 30px;
+            border-radius: 12px;
+            font-weight: 600;
+            background: white;
+            color: #6c757d;
+            transition: all 0.3s;
+        }
+        
+        .btn-secondary:hover {
+            background: #6c757d;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        /* Header */
+        .page-header {
+            background: white;
+            padding: 25px 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+        
+        .page-header h4 {
+            margin: 0;
+            font-weight: 700;
+            color: #23272F;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .page-header h4 i {
+            color: var(--primary-green);
+        }
+        
+        /* Input Icons */
+        .input-group-icon {
             position: relative;
         }
         
-        .input-wrapper input:focus + .input-icon {
-            color: #0E8D4D;
+        .input-group-icon .form-control {
+            padding-left: 45px;
         }
         
-        .step-indicator {
-            transition: all 0.3s ease;
+        .input-group-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            z-index: 10;
         }
         
-        .step-indicator.active {
-            background: linear-gradient(135deg, #0E8D4D 0%, #47a55e 100%);
+        .input-group-icon .form-control:focus ~ i {
+            color: var(--primary-green);
+        }
+        
+        /* Password Toggle */
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6c757d;
+            z-index: 10;
+        }
+        
+        .password-toggle:hover {
+            color: var(--primary-green);
+        }
+        
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            background: var(--primary-green);
             color: white;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 1001;
+            box-shadow: 0 4px 15px rgba(14, 141, 77, 0.3);
+        }
+        
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+        
+        .sidebar-overlay.active {
+            display: block;
+        }
+        
+        /* Responsive */
+        @media (max-width: 991px) {
+            .menu-toggle {
+                display: block;
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 20px 15px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .modern-card {
+                padding: 25px 20px;
+            }
+            
+            .page-header {
+                padding: 20px;
+            }
         }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
+<body>
+    <!-- Mobile Menu Toggle -->
+    <button class="menu-toggle" id="menuToggle">
+        <i class="bi bi-list"></i>
+    </button>
+    
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    
+    <!-- Sidebar -->
+    @include('collecteur.partials.sidebar')
 
-    <div class="w-full max-w-4xl">
+    <!-- Main Content -->
+    <div class="main-content">
         
-        <!-- Header avec retour -->
-        <div class="mb-8 animate-slide-in">
-            <a href="{{ route('collecteur.dashboard') }}" 
-               class="inline-flex items-center gap-2 px-6 py-3 bg-white rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-105 group mb-6">
-                <i class="ti ti-arrow-left text-xl text-primary group-hover:-translate-x-1 transition-transform"></i>
-                <span class="font-semibold text-gray-800">Retour au dashboard</span>
-            </a>
-            
-            <!-- Titre principal -->
-            <div class="text-center">
-                <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-primary to-green-600 rounded-2xl mb-4 shadow-lg">
-                    <i class="ti ti-user-plus text-4xl text-white"></i>
-                </div>
-                <h1 class="text-4xl font-extrabold text-gray-800 mb-2">Nouveau Client</h1>
-                <p class="text-gray-600 text-lg">Enregistrez un nouveau client dans le système</p>
-            </div>
+        <!-- Page Header -->
+        <div class="page-header">
+            <h4>
+                <i class="ti ti-user-plus"></i>
+                Ajouter un client
+            </h4>
+            <p class="text-muted mb-0 mt-2">Créez un nouveau compte client dans le système</p>
         </div>
 
-        <!-- Formulaire -->
-        <form method="POST" action="{{ route('clients.store') }}" class="bg-white rounded-3xl shadow-2xl p-8 sm:p-10 animate-fade-in">
-            @csrf
-
-            <!-- Step Indicators -->
-            <div class="flex items-center justify-center gap-4 mb-10">
-                <div class="step-indicator active flex items-center gap-2 px-4 py-2 rounded-full bg-primary text-white font-semibold">
-                    <i class="ti ti-user"></i>
-                    <span class="hidden sm:inline">Informations personnelles</span>
-                    <span class="sm:hidden">Personnel</span>
+        <!-- Form Card -->
+        <div class="modern-card">
+            
+            <!-- Success Message -->
+            @if(session('success'))
+                <div class="alert alert-success border-0 mb-4" style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border-left: 4px solid #4CAF50 !important;">
+                    <div class="d-flex align-items-start">
+                        <i class="ti ti-check-circle" style="font-size: 1.5rem; color: #2E7D32; margin-right: 12px; margin-top: 2px;"></i>
+                        <div>
+                            <strong style="color: #1B5E20;">Succès</strong>
+                            <p class="mb-0" style="color: #2E7D32; font-size: 0.95rem;">{{ session('success') }}</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="w-12 h-1 bg-gray-200 rounded"></div>
-                <div class="step-indicator flex items-center gap-2 px-4 py-2 rounded-full bg-gray-200 text-gray-600 font-semibold">
-                    <i class="ti ti-lock"></i>
-                    <span class="hidden sm:inline">Accès compte</span>
-                    <span class="sm:hidden">Compte</span>
+            @endif
+
+            <!-- Error Messages -->
+            @if($errors->any())
+                <div class="alert alert-danger border-0 mb-4" style="background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%); border-left: 4px solid #f44336 !important;">
+                    <div class="d-flex align-items-start">
+                        <i class="ti ti-alert-circle" style="font-size: 1.5rem; color: #c62828; margin-right: 12px; margin-top: 2px;"></i>
+                        <div>
+                            <strong style="color: #b71c1c;">Erreurs de validation</strong>
+                            <ul class="mb-0 mt-2" style="color: #c62828; font-size: 0.95rem;">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            <!-- Info Alert -->
+            <div class="alert alert-info border-0 mb-4" style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-left: 4px solid #2196F3 !important;">
+                <div class="d-flex align-items-start">
+                    <i class="ti ti-info-circle" style="font-size: 1.5rem; color: #1976D2; margin-right: 12px; margin-top: 2px;"></i>
+                    <div>
+                        <strong style="color: #1565C0;">Information</strong>
+                        <p class="mb-0" style="color: #1976D2; font-size: 0.95rem;">Les informations de connexion sont optionnelles. Si vous les renseignez, le client pourra se connecter à l'application.</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Section 1: Informations personnelles -->
-            <div class="mb-8">
-                <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-                    <i class="ti ti-id text-primary"></i>
+            <form method="POST" action="{{ route('clients.store') }}">
+                @csrf
+
+                <!-- Section: Informations personnelles -->
+                <h5 class="mb-4 pb-3 border-bottom" style="color: var(--primary-green); font-weight: 700;">
+                    <i class="ti ti-id me-2"></i>
                     Informations personnelles
-                </h3>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    
+                </h5>
+
+                <div class="row">
                     <!-- Nom -->
-                    <div class="input-wrapper">
-                        <label for="nom_cli" class="block text-sm font-semibold text-gray-700 mb-2">
-                            Nom <span class="text-red-500">*</span>
+                    <div class="col-md-6 mb-4">
+                        <label for="nom_cli" class="form-label">
+                            Nom <span class="text-danger">*</span>
                         </label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none input-icon text-gray-400 transition-colors">
-                                <i class="ti ti-user text-xl"></i>
-                            </div>
-                            <input id="nom_cli" 
-                                   type="text" 
+                        <div class="input-group-icon">
+                            <input type="text" 
+                                   id="nom_cli" 
                                    name="nom_cli" 
-                                   required
-                                   class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-                                   placeholder="Entrez le nom">
+                                   class="form-control @error('nom_cli') is-invalid @enderror" 
+                                   placeholder="Entrez le nom"
+                                   value="{{ old('nom_cli') }}"
+                                   required>
+                            <i class="ti ti-user"></i>
                         </div>
+                        @error('nom_cli')
+                            <div class="text-danger mt-1" style="font-size: 0.875rem;">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <!-- Prénom -->
-                    <div class="input-wrapper">
-                        <label for="prenom_cli" class="block text-sm font-semibold text-gray-700 mb-2">
-                            Prénom <span class="text-red-500">*</span>
+                    <div class="col-md-6 mb-4">
+                        <label for="prenom_cli" class="form-label">
+                            Prénom <span class="text-danger">*</span>
                         </label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none input-icon text-gray-400 transition-colors">
-                                <i class="ti ti-user text-xl"></i>
-                            </div>
-                            <input id="prenom_cli" 
-                                   type="text" 
+                        <div class="input-group-icon">
+                            <input type="text" 
+                                   id="prenom_cli" 
                                    name="prenom_cli" 
-                                   required
-                                   class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-                                   placeholder="Entrez le prénom">
+                                   class="form-control @error('prenom_cli') is-invalid @enderror" 
+                                   placeholder="Entrez le prénom"
+                                   value="{{ old('prenom_cli') }}"
+                                   required>
+                            <i class="ti ti-user"></i>
                         </div>
+                        @error('prenom_cli')
+                            <div class="text-danger mt-1" style="font-size: 0.875rem;">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <!-- Téléphone -->
-                    <div class="input-wrapper">
-                        <label for="tel_cli" class="block text-sm font-semibold text-gray-700 mb-2">
-                            Téléphone <span class="text-red-500">*</span>
+                    <div class="col-md-6 mb-4">
+                        <label for="tel_cli" class="form-label">
+                            Téléphone <span class="text-danger">*</span>
                         </label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none input-icon text-gray-400 transition-colors">
-                                <i class="ti ti-phone text-xl"></i>
-                            </div>
-                            <input id="tel_cli" 
-                                   type="tel" 
+                        <div class="input-group-icon">
+                            <input type="tel" 
+                                   id="tel_cli" 
                                    name="tel_cli" 
-                                   required
-                                   class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-                                   placeholder="+237 6XX XXX XXX">
+                                   class="form-control @error('tel_cli') is-invalid @enderror" 
+                                   placeholder="+237 6XX XXX XXX"
+                                   value="{{ old('tel_cli') }}"
+                                   required>
+                            <i class="ti ti-phone"></i>
                         </div>
+                        @error('tel_cli')
+                            <div class="text-danger mt-1" style="font-size: 0.875rem;">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <!-- Adresse -->
-                    <div class="input-wrapper">
-                        <label for="adresse_cli" class="block text-sm font-semibold text-gray-700 mb-2">
-                            Adresse <span class="text-red-500">*</span>
+                    <div class="col-md-6 mb-4">
+                        <label for="adresse_cli" class="form-label">
+                            Adresse <span class="text-danger">*</span>
                         </label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none input-icon text-gray-400 transition-colors">
-                                <i class="ti ti-map-pin text-xl"></i>
-                            </div>
-                            <input id="adresse_cli" 
-                                   type="text" 
+                        <div class="input-group-icon">
+                            <input type="text" 
+                                   id="adresse_cli" 
                                    name="adresse_cli" 
-                                   required
-                                   class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-                                   placeholder="Entrez l'adresse complète">
+                                   class="form-control @error('adresse_cli') is-invalid @enderror" 
+                                   placeholder="Entrez l'adresse complète"
+                                   value="{{ old('adresse_cli') }}"
+                                   required>
+                            <i class="ti ti-map-pin"></i>
                         </div>
+                        @error('adresse_cli')
+                            <div class="text-danger mt-1" style="font-size: 0.875rem;">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <!-- Solde initial -->
-                    <div class="input-wrapper md:col-span-2">
-                        <label for="solde_cli" class="block text-sm font-semibold text-gray-700 mb-2">
-                            Solde initial <span class="text-red-500">*</span>
+                    <div class="col-md-12 mb-4">
+                        <label for="solde_cli" class="form-label">
+                            Solde initial <span class="text-danger">*</span>
                         </label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none input-icon text-gray-400 transition-colors">
-                                <i class="ti ti-cash text-xl"></i>
-                            </div>
-                            <input id="solde_cli" 
-                                   type="number" 
+                        <div class="input-group-icon">
+                            <input type="number" 
+                                   id="solde_cli" 
                                    name="solde_cli" 
-                                   required
+                                   class="form-control @error('solde_cli') is-invalid @enderror" 
+                                   placeholder="0"
+                                   value="{{ old('solde_cli', 0) }}"
                                    min="0"
-                                   class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-                                   placeholder="0">
-                            <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                                <span class="text-gray-500 font-semibold">FCFA</span>
-                            </div>
+                                   step="0.01"
+                                   required>
+                            <i class="ti ti-cash"></i>
                         </div>
-                        <p class="mt-2 text-sm text-gray-500 flex items-center gap-1">
+                        @error('solde_cli')
+                            <div class="text-danger mt-1" style="font-size: 0.875rem;">{{ $message }}</div>
+                        @enderror
+                        <small class="text-muted">
                             <i class="ti ti-info-circle"></i>
-                            Montant initial du compte client
-                        </p>
+                            Montant initial du compte client (en FCFA)
+                        </small>
                     </div>
-
                 </div>
-            </div>
 
-            <!-- Séparateur -->
-            <div class="relative my-8">
-                <div class="absolute inset-0 flex items-center">
-                    <div class="w-full border-t-2 border-gray-200"></div>
-                </div>
-                <div class="relative flex justify-center">
-                    <span class="bg-white px-6 py-2 text-sm font-semibold text-gray-600 rounded-full border-2 border-gray-200">
-                        <i class="ti ti-lock text-primary"></i> Paramètres de connexion (optionnel)
-                    </span>
-                </div>
-            </div>
+                <!-- Section: Accès au compte (Optionnel) -->
+                <h5 class="mb-4 pb-3 border-bottom mt-4" style="color: var(--primary-green); font-weight: 700;">
+                    <i class="ti ti-lock me-2"></i>
+                    Paramètres de connexion <span class="badge bg-secondary ms-2">Optionnel</span>
+                </h5>
 
-            <!-- Section 2: Accès au compte -->
-            <div class="mb-8">
-                <h3 class="text-2xl font-bold text-gray-800 mb-2 flex items-center gap-2">
-                    <i class="ti ti-key text-primary"></i>
-                    Accès au compte client
-                </h3>
-                <p class="text-gray-600 mb-6 text-sm">
-                    <i class="ti ti-info-circle text-blue-500"></i> 
-                    Si vous souhaitez que le client puisse se connecter à l'application, renseignez ces informations.
-                </p>
-                
-                <div class="grid grid-cols-1 gap-6">
-                    
+                <div class="row">
                     <!-- Email -->
-                    <div class="input-wrapper">
-                        <label for="user_email" class="block text-sm font-semibold text-gray-700 mb-2">
+                    <div class="col-md-12 mb-4">
+                        <label for="user_email" class="form-label">
                             Email de connexion
                         </label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none input-icon text-gray-400 transition-colors">
-                                <i class="ti ti-mail text-xl"></i>
-                            </div>
-                            <input id="user_email" 
-                                   type="email" 
-                                   name="user_email"
-                                   class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-                                   placeholder="email@exemple.com">
+                        <div class="input-group-icon">
+                            <input type="email" 
+                                   id="user_email" 
+                                   name="user_email" 
+                                   class="form-control @error('user_email') is-invalid @enderror" 
+                                   placeholder="email@exemple.com"
+                                   value="{{ old('user_email') }}">
+                            <i class="ti ti-mail"></i>
                         </div>
+                        @error('user_email')
+                            <div class="text-danger mt-1" style="font-size: 0.875rem;">{{ $message }}</div>
+                        @enderror
+                        <small class="text-muted">
+                            <i class="ti ti-info-circle"></i>
+                            Si renseigné, le client pourra se connecter avec cet email
+                        </small>
                     </div>
 
                     <!-- Mot de passe -->
-                    <div class="input-wrapper">
-                        <label for="user_password" class="block text-sm font-semibold text-gray-700 mb-2">
+                    <div class="col-md-6 mb-4">
+                        <label for="user_password" class="form-label">
                             Mot de passe
                         </label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none input-icon text-gray-400 transition-colors">
-                                <i class="ti ti-lock text-xl"></i>
-                            </div>
-                            <input id="user_password" 
-                                   type="password" 
-                                   name="user_password"
-                                   class="w-full pl-12 pr-12 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                        <div class="input-group-icon">
+                            <input type="password" 
+                                   id="user_password" 
+                                   name="user_password" 
+                                   class="form-control @error('user_password') is-invalid @enderror" 
                                    placeholder="••••••••">
-                            <button type="button" 
-                                    onclick="togglePassword('user_password', 'eye1')"
-                                    class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-primary transition-colors">
-                                <i id="eye1" class="ti ti-eye text-xl"></i>
-                            </button>
+                            <i class="ti ti-key"></i>
+                            <span class="password-toggle" onclick="togglePassword('user_password', 'eye1')">
+                                <i id="eye1" class="ti ti-eye"></i>
+                            </span>
                         </div>
+                        @error('user_password')
+                            <div class="text-danger mt-1" style="font-size: 0.875rem;">{{ $message }}</div>
+                        @enderror
+                        <small class="text-muted">
+                            <i class="ti ti-shield-lock"></i>
+                            Minimum 6 caractères
+                        </small>
                     </div>
 
-                    <!-- Confirmation mot de passe -->
-                    <div class="input-wrapper">
-                        <label for="user_password_confirmation" class="block text-sm font-semibold text-gray-700 mb-2">
-                            Confirmation du mot de passe
+                    <!-- Confirmation -->
+                    <div class="col-md-6 mb-4">
+                        <label for="user_password_confirmation" class="form-label">
+                            Confirmer le mot de passe
                         </label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none input-icon text-gray-400 transition-colors">
-                                <i class="ti ti-lock-check text-xl"></i>
-                            </div>
-                            <input id="user_password_confirmation" 
-                                   type="password" 
-                                   name="user_password_confirmation"
-                                   class="w-full pl-12 pr-12 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                        <div class="input-group-icon">
+                            <input type="password" 
+                                   id="user_password_confirmation" 
+                                   name="user_password_confirmation" 
+                                   class="form-control" 
                                    placeholder="••••••••">
-                            <button type="button" 
-                                    onclick="togglePassword('user_password_confirmation', 'eye2')"
-                                    class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-primary transition-colors">
-                                <i id="eye2" class="ti ti-eye text-xl"></i>
-                            </button>
+                            <i class="ti ti-lock-check"></i>
+                            <span class="password-toggle" onclick="togglePassword('user_password_confirmation', 'eye2')">
+                                <i id="eye2" class="ti ti-eye"></i>
+                            </span>
                         </div>
                     </div>
-
                 </div>
-            </div>
 
-            <!-- Boutons d'action -->
-            <div class="flex flex-col sm:flex-row gap-4 mt-10">
-                <button type="reset" 
-                        class="flex-1 px-8 py-4 border-2 border-gray-300 text-gray-700 font-bold rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all flex items-center justify-center gap-2">
-                    <i class="ti ti-refresh"></i>
-                    Réinitialiser
-                </button>
-                <button type="submit" 
-                        class="flex-1 px-8 py-4 bg-gradient-to-r from-primary to-green-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-2">
-                    <i class="ti ti-check"></i>
-                    Enregistrer le client
-                </button>
-            </div>
-
-            <!-- Note de sécurité -->
-            <div class="mt-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-lg">
-                <div class="flex items-start gap-3">
-                    <i class="ti ti-shield-check text-2xl text-blue-500 mt-1"></i>
-                    <div>
-                        <p class="text-sm font-semibold text-blue-800 mb-1">Sécurité des données</p>
-                        <p class="text-xs text-blue-700">Toutes les informations sont cryptées et stockées en toute sécurité. Le client recevra un email de bienvenue si une adresse email est renseignée.</p>
-                    </div>
+                <!-- Buttons -->
+                <div class="mt-5 d-flex gap-3 flex-wrap">
+                    <button type="submit" class="btn btn-success">
+                        <i class="ti ti-check-circle me-2"></i>
+                        Enregistrer le client
+                    </button>
+                    <a href="{{ route('clients.index') }}" class="btn btn-secondary">
+                        <i class="ti ti-arrow-left me-2"></i>
+                        Retour à la liste
+                    </a>
+                    <button type="reset" class="btn btn-outline-secondary">
+                        <i class="ti ti-refresh me-2"></i>
+                        Réinitialiser
+                    </button>
                 </div>
-            </div>
 
-        </form>
+            </form>
+        </div>
 
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Mobile menu toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.querySelector('.sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        
+        if (menuToggle) {
+            menuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+                sidebarOverlay.classList.toggle('active');
+            });
+        }
+        
+        if (sidebarOverlay) {
+            sidebarOverlay.addEventListener('click', function() {
+                sidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+            });
+        }
+
         // Toggle password visibility
         function togglePassword(inputId, iconId) {
             const input = document.getElementById(inputId);
@@ -346,35 +587,42 @@
             }
         }
 
-        // Animation des step indicators au scroll
-        window.addEventListener('scroll', function() {
-            const form = document.querySelector('form');
-            const formRect = form.getBoundingClientRect();
-            const steps = document.querySelectorAll('.step-indicator');
-            
-            // Si on a scrollé au-delà de la moitié du formulaire
-            if (formRect.top < window.innerHeight / 2) {
-                steps.forEach(step => step.classList.add('active'));
-            }
-        });
-
-        // Validation en temps réel des mots de passe
+        // Validation des mots de passe
         const password = document.getElementById('user_password');
         const confirmPassword = document.getElementById('user_password_confirmation');
 
-        confirmPassword.addEventListener('input', function() {
-            if (password.value && confirmPassword.value) {
-                if (password.value !== confirmPassword.value) {
-                    confirmPassword.setCustomValidity('Les mots de passe ne correspondent pas');
-                    confirmPassword.classList.add('border-red-500');
-                } else {
-                    confirmPassword.setCustomValidity('');
-                    confirmPassword.classList.remove('border-red-500');
-                    confirmPassword.classList.add('border-green-500');
+        if (confirmPassword) {
+            confirmPassword.addEventListener('input', function() {
+                if (password.value && confirmPassword.value) {
+                    if (password.value !== confirmPassword.value) {
+                        confirmPassword.setCustomValidity('Les mots de passe ne correspondent pas');
+                        confirmPassword.classList.add('is-invalid');
+                    } else {
+                        confirmPassword.setCustomValidity('');
+                        confirmPassword.classList.remove('is-invalid');
+                        confirmPassword.classList.add('is-valid');
+                    }
                 }
-            }
+            });
+        }
+
+        // Animation des icônes au focus
+        document.querySelectorAll('.form-control').forEach(input => {
+            input.addEventListener('focus', function() {
+                const icon = this.parentElement.querySelector('.ti');
+                if (icon && !icon.classList.contains('password-toggle')) {
+                    icon.style.transform = 'translateY(-50%) scale(1.2)';
+                    icon.style.transition = 'transform 0.2s ease';
+                }
+            });
+
+            input.addEventListener('blur', function() {
+                const icon = this.parentElement.querySelector('.ti');
+                if (icon && !icon.classList.contains('password-toggle')) {
+                    icon.style.transform = 'translateY(-50%) scale(1)';
+                }
+            });
         });
     </script>
-
 </body>
 </html>

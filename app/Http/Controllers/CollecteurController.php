@@ -18,39 +18,41 @@ class CollecteurController extends Controller
     public function dashboard()
     {
         $user = Auth::user();
-        
+
         // Récupérer le collecteur connecté via related_id
         $collecteur = Collecteur::findOrFail($user->related_id);
-        
+
         // Statistiques générales du collecteur
         $totalTransactions = Transaction::where('id_collect', $collecteur->id_collect)->count();
         $totalPaiements = Paiement::where('id_collect', $collecteur->id_collect)->count();
-        
+
         // Compter les clients uniques qui ont des transactions ou paiements avec ce collecteur
         $clientIdsTransactions = Transaction::where('id_collect', $collecteur->id_collect)
             ->pluck('id_cli')
             ->unique();
+        
         $clientIdsPaiements = Paiement::where('id_collect', $collecteur->id_collect)
             ->pluck('id_cli')
             ->unique();
-        $totalClients = $clientIdsTransactions->merge($clientIdsPaiements)->unique()->count();
         
+        $totalClients = $clientIdsTransactions->merge($clientIdsPaiements)->unique()->count();
+
         // Statistiques financières
         $totalEncaissements = Paiement::where('id_collect', $collecteur->id_collect)
             ->where('statut_paie', 'validé')
             ->sum('montant_paie');
-        
+
         $totalTransactionsMontant = Transaction::where('id_collect', $collecteur->id_collect)
             ->sum('montant_transact');
-        
+
         $paiementsEnAttente = Paiement::where('id_collect', $collecteur->id_collect)
             ->where('statut_paie', 'en_attente')
             ->count();
-        
+
         $montantEnAttente = Paiement::where('id_collect', $collecteur->id_collect)
             ->where('statut_paie', 'en_attente')
             ->sum('montant_paie');
-        
+
         // Statistiques par période (ce mois)
         $paiementsCeMois = Paiement::where('id_collect', $collecteur->id_collect)
             ->whereMonth('date_paie', Carbon::now()->month)
@@ -58,26 +60,35 @@ class CollecteurController extends Controller
             ->where('statut_paie', 'validé')
             ->sum('montant_paie');
         
-        // Transactions récentes du collecteur
-        $transactionsRecent = Transaction::where('id_collect', $collecteur->id_collect)
-            ->with(['client'])
-            ->orderBy('date_transact', 'desc')
-            ->limit(10)
-            ->get();
-        
-        // Paiements récents du collecteur
+        // Paiements aujourd'hui (montant total)
+        $paiementsAujourdhui = Paiement::where('id_collect', $collecteur->id_collect)
+            ->whereDate('date_paie', Carbon::today())
+            ->where('statut_paie', 'validé')
+            ->sum('montant_paie');
+
+        // ✅ MODIFICATION PRINCIPALE : Paiements JOURNALIERS (aujourd'hui) au lieu de transactions récentes
+        $paiementsJournaliers = Paiement::where('id_collect', $collecteur->id_collect)
+            ->whereDate('date_paie', Carbon::today()) // ✅ Filtre sur aujourd'hui uniquement
+            ->with(['client']) // Charger la relation client
+            ->orderBy('date_paie', 'desc')
+            ->get(); // ✅ Récupère TOUS les paiements du jour (pas de limite)
+
+        // Nombre de paiements aujourd'hui
+        $nombrePaiementsAujourdhui = $paiementsJournaliers->count();
+
+        // Paiements récents (pour la carte des paiements récents - optionnel)
         $paiementsRecent = Paiement::where('id_collect', $collecteur->id_collect)
             ->with(['client'])
             ->orderBy('date_paie', 'desc')
-            ->limit(10)
+            ->limit(5)
             ->get();
-        
-        // Historique complet des transactions du collecteur
-        $transactions = Transaction::where('id_collect', $collecteur->id_collect)
+
+        // Historique complet des PAIEMENTS avec pagination
+        $paiements = Paiement::where('id_collect', $collecteur->id_collect)
             ->with(['client'])
-            ->orderBy('date_transact', 'desc')
-            ->paginate(15);
-        
+            ->orderBy('date_paie', 'desc')
+            ->paginate(10);
+
         return view('collecteur.dashboard', compact(
             'collecteur',
             'totalTransactions',
@@ -88,12 +99,14 @@ class CollecteurController extends Controller
             'paiementsEnAttente',
             'montantEnAttente',
             'paiementsCeMois',
-            'transactionsRecent',
+            'paiementsAujourdhui',
+            'paiementsJournaliers',        // ✅ NOUVEAU : Liste des paiements du jour
+            'nombrePaiementsAujourdhui',   // ✅ NOUVEAU : Nombre de paiements du jour
             'paiementsRecent',
-            'transactions'
+            'paiements'
         ));
     }
-    
+
     public function index()
     {
         return Collecteur::all();

@@ -58,23 +58,3 @@ class Paiement extends Model
     }
 }
 
-// ==== Indications utiles ====
-//
-// 1. Pour que les noms des clients s'affichent dans Blade :
-//     - Le modèle Client doit exister et le champ du nom doit être correctement défini (ex : "nom" ou "name").
-//     - Vérifiez dans la base de données si le champ existe bien et si les données sont présentes.
-//     - Dans votre blade, utilisez : $paiement->client->nom  (ou ->name selon le champ réel).
-//
-// 2. Si aucun client ne s'affiche, il faut :
-//     - Vérifier que la relation (clé étrangère id_cli) est correcte dans la table paiements.
-//     - Vérifier la table clients : la clé primaire doit être 'id_cli'.
-//
-// 3. Pour déboguer : utilisez @dd($clients) ou @dd($paiement->client) dans vos blades.
-//
-// 4. Si vous utilisez une table avec un nom au singulier ("paiement" pas "paiements"):
-//     - Décommentez la ligne protected $table = 'paiement'; ci-dessus.
-//
-/* Exemple d'accès dans le controller ou la vue :
-    $paiement = Paiement::with('client')->first();
-    echo $paiement->client ? $paiement->client->nom : '';
-*/

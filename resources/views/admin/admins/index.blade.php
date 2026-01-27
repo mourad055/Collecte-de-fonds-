@@ -158,7 +158,7 @@
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
     
     <!-- Sidebar -->
-    @include('admin.partials.sidebar')
+   
 
     <!-- Main Content -->
     <div class="main-content">
